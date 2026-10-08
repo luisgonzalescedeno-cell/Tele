@@ -39,7 +39,23 @@
   }
 }
 
-*, *::before, *::after { box-sizing: inherit; }
+:root[data-theme="dark"] {
+  --bg: #061125;
+  --bg2: #0d2347;
+  --ink: #e6f0ff;
+  --card: rgba(16, 41, 79, 0.88);
+  --acc: #ff8a3d;
+  --acc2: #ffd166;
+  --cy: #35d0e8;
+  --ok: #5fd68a;
+  --bad: #ff7b7b;
+  --ln: #6f9be0;
+  --grid: rgba(111, 155, 224, 0.11);
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
 
 html {
   font-size: clamp(16px, 2.2vw, 26px);
@@ -64,7 +80,7 @@ body {
   font-weight: 700;
 }
 
-/* Fondo Optimizado con GPU Hardware Acceleration */
+/* Fondo dinámico */
 .bg {
   position: fixed;
   inset: 0;
@@ -79,27 +95,25 @@ body {
   inset: -60px;
   background-image: linear-gradient(var(--grid) 2px, transparent 2px), linear-gradient(90deg, var(--grid) 2px, transparent 2px);
   background-size: 60px 60px;
-  animation: grid 12s linear infinite;
-  will-change: transform;
+  animation: grid 8s linear infinite;
 }
 
 .bg i {
   position: absolute;
   border-radius: 50%;
   filter: blur(60px);
-  opacity: 0.35;
+  opacity: 0.4;
   will-change: transform;
-  transform: translateZ(0);
 }
 
-.bg i:nth-child(1) { width: 42vmax; height: 42vmax; background: var(--cy); left: -12vmax; top: -10vmax; animation: drift1 16s ease-in-out infinite alternate; }
-.bg i:nth-child(2) { width: 36vmax; height: 36vmax; background: var(--acc); right: -10vmax; bottom: -12vmax; animation: drift2 13s ease-in-out infinite alternate; }
-.bg i:nth-child(3) { width: 22vmax; height: 22vmax; background: var(--acc2); left: 45%; top: 35%; opacity: 0.2; animation: drift3 10s ease-in-out infinite alternate; }
+.bg i:nth-child(1) { width: 42vmax; height: 42vmax; background: var(--cy); left: -12vmax; top: -10vmax; animation: drift1 14s ease-in-out infinite alternate; }
+.bg i:nth-child(2) { width: 36vmax; height: 36vmax; background: var(--acc); right: -10vmax; bottom: -12vmax; animation: drift2 11s ease-in-out infinite alternate; }
+.bg i:nth-child(3) { width: 22vmax; height: 22vmax; background: var(--acc2); left: 45%; top: 35%; opacity: 0.25; animation: drift3 9s ease-in-out infinite alternate; }
 
-@keyframes grid { to { transform: translate3d(60px, 60px, 0); } }
-@keyframes drift1 { to { transform: translate3d(25vw, 18vh, 0) scale(1.15); } }
-@keyframes drift2 { to { transform: translate3d(-25vw, -18vh, 0) scale(1.1); } }
-@keyframes drift3 { to { transform: translate3d(-15vw, 12vh, 0) scale(1.3); } }
+@keyframes grid { to { transform: translate(60px, 60px); } }
+@keyframes drift1 { to { transform: translate(25vw, 18vh) scale(1.2); } }
+@keyframes drift2 { to { transform: translate(-25vw, -18vh) scale(1.15); } }
+@keyframes drift3 { to { transform: translate(-15vw, 12vh) scale(1.4); } }
 
 .bar {
   position: fixed;
@@ -111,8 +125,7 @@ body {
   transform: scaleX(0);
   background: linear-gradient(90deg, var(--cy), var(--acc), var(--acc2));
   z-index: 5;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .deck {
@@ -125,27 +138,15 @@ body {
   position: absolute;
   inset: 0;
   padding: 24px 7vw;
-  display: flex;
+  display: none;
   flex-direction: column;
   justify-content: center;
   gap: 20px;
   overflow-y: auto;
-  opacity: 0;
-  visibility: hidden;
-  transform: translate3d(0, 24px, 0) scale(0.98);
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              visibility 0.4s step-end;
-  will-change: opacity, transform;
 }
 
 .slide.on {
-  opacity: 1;
-  visibility: visible;
-  transform: translate3d(0, 0, 0) scale(1);
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              visibility 0s step-start;
+  display: flex;
 }
 
 h1 {
@@ -154,14 +155,11 @@ h1 {
   margin: 0;
   letter-spacing: -0.02em;
   background: linear-gradient(100deg, var(--ink) 20%, var(--cy) 45%, var(--acc) 60%, var(--ink) 80%);
-  background-size: 200% 100%;
+  background-size: 250% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: shineTitle 8s linear infinite;
 }
-
-@keyframes shineTitle { to { background-position: -200% 0; } }
 
 h2 {
   font-size: clamp(30px, 4.5vw, 50px);
@@ -172,17 +170,19 @@ h2 {
 
 h2.bad { color: var(--bad); }
 
-p { margin: 0; max-width: 32em; }
+p {
+  margin: 0;
+  max-width: 32em;
+}
 
 .row {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
-  perspective: 1000px;
+  perspective: 700px;
 }
 
-/* Cajas Hexteto Fluidez Optimizada */
 .box {
   background: var(--card);
   border: 3px solid var(--ln);
@@ -190,35 +190,30 @@ p { margin: 0; max-width: 32em; }
   padding: 6px 14px;
   font-size: 1rem;
   display: inline-flex;
-  align-items: center;
   overflow: hidden;
   white-space: nowrap;
-  box-shadow: 0 5px 0 var(--ln), 0 10px 20px rgba(11, 36, 71, 0.12);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 220px;
+  box-shadow: 0 5px 0 var(--ln), 0 10px 20px rgba(11, 36, 71, 0.15);
   backdrop-filter: blur(8px);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              background-color 0.3s ease,
-              border-color 0.3s ease,
-              color 0.3s ease,
-              opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform, opacity;
-  transform: translateZ(0);
 }
 
-/* Animación de Ceros vía Transform */
 .box .z {
   display: inline-block;
+  max-width: 3em;
+  overflow: hidden;
   color: var(--bad);
-  transform-origin: right center;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 0.3s ease;
-  will-change: transform, opacity;
+  transition: all 0.5s ease;
 }
 
 .box.gone {
+  max-width: 0;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: -10px;
+  border-width: 0;
   opacity: 0;
-  transform: scale(0.6) translate3d(0, -10px, 0);
-  pointer-events: none;
+  box-shadow: none;
 }
 
 .box.dc {
@@ -230,14 +225,13 @@ p { margin: 0; max-width: 32em; }
 .box.hl {
   background: var(--cy);
   color: #fff;
-  transform: translate3d(0, -8px, 0) scale(1.08);
-  box-shadow: 0 12px 0 var(--ln), 0 0 25px var(--cy);
+  transform: translateY(-8px) scale(1.08);
+  box-shadow: 0 10px 0 var(--ln), 0 0 25px var(--cy);
 }
 
 .sep {
   font-size: 1rem;
   opacity: 0.6;
-  transition: opacity 0.3s ease;
 }
 
 button {
@@ -250,12 +244,10 @@ button {
   border-radius: 12px;
   padding: 10px 22px;
   cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 0 rgba(11, 36, 71, 0.25), 0 8px 18px rgba(217, 72, 15, 0.25);
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
-              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
+  box-shadow: 0 4px 0 rgba(11, 36, 71, 0.25), 0 8px 18px rgba(217, 72, 15, 0.3);
 }
 
 button::before {
@@ -267,17 +259,15 @@ button::before {
   height: 100%;
   background: linear-gradient(100deg, transparent, rgba(255,255,255,0.4), transparent);
   transform: skewX(-20deg);
-  animation: shine 4s ease-in-out infinite;
+  animation: shine 3.5s ease-in-out infinite;
 }
 
 button:hover {
-  transform: translate3d(0, -3px, 0) scale(1.03);
-  box-shadow: 0 7px 0 rgba(11, 36, 71, 0.25), 0 12px 22px rgba(217, 72, 15, 0.35);
+  transform: translateY(-2px) scale(1.04);
 }
 
 button:active {
-  transform: translate3d(0, 2px, 0) scale(0.98);
-  box-shadow: 0 2px 0 rgba(11, 36, 71, 0.25), 0 4px 10px rgba(217, 72, 15, 0.2);
+  transform: translateY(2px) scale(0.97);
 }
 
 button:focus-visible {
@@ -292,18 +282,19 @@ button.alt {
   box-shadow: 0 4px 0 var(--ln);
 }
 
-button.alt::before { display: none; }
+button.alt::before {
+  display: none;
+}
 
 .out {
   min-height: 1.5em;
   font-weight: 500;
-  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .bad { color: var(--bad); }
 .good { color: var(--ok); }
 
-/* Red Animada Suave */
+/* Red Animada */
 .net {
   position: relative;
   height: 80px;
@@ -331,7 +322,7 @@ button.alt::before { display: none; }
   border-radius: 50%;
   background: var(--card);
   border: 5px solid var(--cy);
-  animation: ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  animation: ping 2s ease-out infinite;
 }
 
 .pk {
@@ -343,25 +334,24 @@ button.alt::before { display: none; }
   border-radius: 8px;
   padding: 2px 10px;
   font-size: 0.9rem;
-  animation: go 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: go 5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   box-shadow: 0 0 15px var(--acc);
-  will-change: transform, opacity;
 }
 
-.pk:nth-child(3) { animation-delay: -1.66s; background: var(--cy); box-shadow: 0 0 15px var(--cy); }
-.pk:nth-child(4) { animation-delay: -3.33s; background: var(--acc2); color: #0b2447; box-shadow: 0 0 15px var(--acc2); }
+.pk:nth-child(3) { animation-delay: -1.7s; background: var(--cy); box-shadow: 0 0 15px var(--cy); }
+.pk:nth-child(4) { animation-delay: -3.4s; background: var(--acc2); color: #0b2447; box-shadow: 0 0 15px var(--acc2); }
 
 @keyframes go {
-  0% { transform: translate3d(0, 0, 0) scale(0.5); opacity: 0; }
-  10% { opacity: 1; transform: translate3d(2vw, 0, 0) scale(1.05); }
-  50% { transform: translate3d(40vw, -12px, 0) scale(1); }
-  90% { opacity: 1; transform: translate3d(78vw, 0, 0) scale(1); }
-  100% { transform: translate3d(85vw, 0, 0) scale(0.5); opacity: 0; }
+  from { left: 0; opacity: 0; transform: scale(0.4); }
+  10% { opacity: 1; transform: scale(1.1); }
+  50% { transform: translateY(-12px) scale(1); }
+  90% { opacity: 1; transform: translateY(0); }
+  to { left: calc(100% - 100px); opacity: 0; transform: scale(0.4); }
 }
 
 @keyframes dash { to { background-position: 32px 0; } }
-@keyframes ping { 0% { box-shadow: 0 0 0 0 var(--cy); } 80%, 100% { box-shadow: 0 0 0 24px rgba(10, 142, 165, 0); } }
-@keyframes shine { 0%, 60% { left: -70%; } 100% { left: 130%; } }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 var(--cy); } 80%, 100% { box-shadow: 0 0 0 22px rgba(10, 142, 165, 0); } }
+@keyframes shine { 0%, 55% { left: -70%; } 100% { left: 130%; } }
 
 nav {
   height: 90px;
@@ -389,12 +379,8 @@ nav {
   opacity: 0.35;
   border: 0;
   box-shadow: none;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-              opacity 0.4s ease, 
-              background-color 0.4s ease,
-              width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.4s cubic-bezier(0.3, 1.5, 0.5, 1);
   cursor: pointer;
-  will-change: transform, width;
 }
 
 .dots button::before { display: none; }
@@ -414,16 +400,15 @@ nav {
 
 .q button.alt { text-align: left; }
 
-/* Entrada Escalonada Staggered por CSS Hardware Acceleration */
-.slide.on > * {
-  animation: slideInStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-  animation-delay: calc(var(--i, 0) * 0.08s);
-}
+/* Animaciones de Entrada */
+@keyframes rise { from { opacity: 0; transform: translateY(50px); } }
+@keyframes pop { from { opacity: 0; transform: scale(0.85); } }
+@keyframes flip { from { opacity: 0; transform: rotateX(-80deg); } }
+@keyframes shake { 20% { transform: translateX(-10px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(2px); } }
 
-@keyframes slideInStagger {
-  from { opacity: 0; transform: translate3d(0, 30px, 0); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); }
-}
+.slide.on > * { animation: rise 0.7s cubic-bezier(0.2, 0.9, 0.2, 1) backwards; animation-delay: calc(var(--i, 0) * 0.12s); }
+.slide.on .row > .box, .slide.on .row > .sep { animation: flip 0.6s cubic-bezier(0.2, 0.9, 0.2, 1) backwards; animation-delay: calc(0.3s + var(--j, 0) * 0.06s); }
+.slide.on .q > * { animation: pop 0.5s backwards; animation-delay: calc(0.35s + var(--j, 0) * 0.1s); }
 
 .who {
   border-left: 6px solid var(--acc);
@@ -439,16 +424,7 @@ nav {
 
 .who b { font-size: 0.95rem; color: var(--cy); }
 
-/* Animación Feedback Feedback Error Shake */
-@keyframes shakeSmooth {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  20% { transform: translate3d(-8px, 0, 0); }
-  40% { transform: translate3d(8px, 0, 0); }
-  60% { transform: translate3d(-4px, 0, 0); }
-  80% { transform: translate3d(4px, 0, 0); }
-}
-
-.out.err { animation: shakeSmooth 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+.out.err { animation: shake 0.4s ease-in-out; }
 
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after { animation: none !important; transition: none !important; }
@@ -530,6 +506,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnNext = document.getElementById('next');
   let currentSlide = 0;
 
+  // Inicializar puntos de navegación
   slides.forEach((_, idx) => {
     const dot = document.createElement('button');
     dot.type = 'button';
@@ -567,6 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (['ArrowLeft', 'PageUp'].includes(e.key)) goToSlide(currentSlide - 1);
   });
 
+  // Datos base IPv6
   const rawHextets = ['2001', '0db8', '0000', '0000', '0000', '0000', '0000', '0001'];
   
   const createBox = (content) => {
@@ -583,7 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return sep;
   };
 
-  // Diapositiva 2
+  // Diapositiva 2: Inspección de hextetos
   const hxContainer = document.getElementById('hx');
   const hxOutput = document.getElementById('hxo');
 
@@ -605,7 +583,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (i < 7) hxContainer.appendChild(createSeparator());
   });
 
-  // Diapositiva 3 - Omisión de ceros vía CSS transform/opacity
+  // Diapositiva 3: Omisión de ceros a la izquierda
   const r1Container = document.getElementById('r1');
   const r1Output = document.getElementById('r1o');
   const btnR1 = document.getElementById('b1');
@@ -631,7 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
   btnR1.onclick = () => {
     isR1Active = !isR1Active;
     r1Container.querySelectorAll('.z').forEach(z => {
-      z.style.transform = isR1Active ? 'scaleX(0)' : 'scaleX(1)';
+      z.style.maxWidth = isR1Active ? '0' : '';
       z.style.opacity = isR1Active ? '0' : '1';
     });
     btnR1.textContent = isR1Active ? 'Deshacer' : 'Aplicar regla 1';
@@ -640,7 +618,7 @@ document.addEventListener('DOMContentLoaded', () => {
       : 'Los ceros de la derecha o del medio se conservan obligatoriamente.';
   };
 
-  // Diapositiva 4 - Compresión ::
+  // Diapositiva 4: Compresión ::
   const compressedHextets = ['2001', 'db8', '0', '0', '0', '0', '0', '1'];
   const r2Container = document.getElementById('r2');
   const r2Output = document.getElementById('r2o');
@@ -674,7 +652,7 @@ document.addEventListener('DOMContentLoaded', () => {
       : 'Hextetos contiguos de ceros se reemplazan por ::';
   };
 
-  // Diapositiva 5
+  // Diapositiva 5: Ambigüedad ::
   const ambContainer = document.getElementById('amb');
   const btnR3 = document.getElementById('b3');
   let splitIndex = 1;
@@ -696,7 +674,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderAmbiguity();
   };
 
-  // Diapositiva 6 - Quiz
+  // Diapositiva 6: Cuestionario
   const quizOptions = [
     { text: '2001::db8::1', valid: false, reason: 'Uso doble de :: no está permitido.' },
     { text: '2001:db8::1', valid: true, reason: 'Sintaxis válida: usa :: una sola vez.' },
@@ -714,6 +692,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     btn.onclick = () => {
       quizOutput.className = `out ${opt.valid ? 'good' : 'bad err'}`;
+      // Forzar reinicio de animación
       void quizOutput.offsetWidth;
       quizOutput.textContent = opt.valid ? `¡Correcto! ${opt.reason}` : `Incorrecto: ${opt.reason}`;
     };
@@ -721,10 +700,11 @@ document.addEventListener('DOMContentLoaded', () => {
     quizContainer.appendChild(btn);
   });
 
-  // Stagger indices
+  // Asignar índices dinámicos para animación escalonada
   slides.forEach(sl => {
     [...sl.children].forEach((child, i) => {
       child.style.setProperty('--i', i);
+      [...child.children].forEach((grandchild, j) => grandchild.style.setProperty('--j', j));
     });
   });
 
