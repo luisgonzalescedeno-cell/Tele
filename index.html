@@ -1,391 +1,196 @@
 <!DOCTYPE html>
-
 <html lang="es">
-
 <head>
-
 <meta charset="utf-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
 <title>IPv6: Reglas de Direccionamiento y Sintaxis</title>
-
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500;700&display=swap">
-
 <style>
-
 :root{--bg:#eaf2fc;--bg2:#d5e5f8;--ink:#0b2447;--card:#ffffffd9;--acc:#d9480f;--acc2:#f59f00;--cy:#0a8ea5;--ok:#1b7f3b;--bad:#c92a2a;--ln:#19376d;--grid:#19376d1a;
-
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#061125;--bg2:#0d2347;--ink:#e6f0ff;--card:#10294fd9;--acc:#ff8a3d;--acc2:#ffd166;--cy:#35d0e8;--ok:#5fd68a;--bad:#ff7b7b;--ln:#6f9be0;--grid:#6f9be01c}}
-
 :root[data-theme="dark"]{--bg:#061125;--bg2:#0d2347;--ink:#e6f0ff;--card:#10294fd9;--acc:#ff8a3d;--acc2:#ffd166;--cy:#35d0e8;--ok:#5fd68a;--bad:#ff7b7b;--ln:#6f9be0;--grid:#6f9be01c}
-
 html{scroll-padding-top:env(safe-area-inset-top,0px);font-size:clamp(17px,2.3vw,28px)}
-
 html,body{height:100%;margin:0}
-
 body{background:linear-gradient(160deg,var(--bg),var(--bg2));color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;font-size:1rem;overflow:hidden;line-height:1.35;position:relative}
-
 .mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700}
 
-
-
 /* fondo vivo */
-
 .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-
 .bg:before{content:"";position:absolute;inset:-60px;background-image:linear-gradient(var(--grid) 2px,transparent 2px),linear-gradient(90deg,var(--grid) 2px,transparent 2px);background-size:60px 60px;animation:grid 6s linear infinite}
-
 .bg i{position:absolute;border-radius:50%;filter:blur(60px);opacity:.45}
-
 .bg i:nth-child(1){width:42vmax;height:42vmax;background:var(--cy);left:-12vmax;top:-10vmax;animation:drift1 14s ease-in-out infinite alternate}
-
 .bg i:nth-child(2){width:36vmax;height:36vmax;background:var(--acc);right:-10vmax;bottom:-12vmax;animation:drift2 11s ease-in-out infinite alternate}
-
 .bg i:nth-child(3){width:22vmax;height:22vmax;background:var(--acc2);left:45%;top:35%;opacity:.25;animation:drift3 9s ease-in-out infinite alternate}
-
 @keyframes grid{to{transform:translate(60px,60px)}}
-
 @keyframes drift1{to{transform:translate(30vw,22vh) scale(1.3)}}
-
 @keyframes drift2{to{transform:translate(-32vw,-20vh) scale(1.2)}}
-
 @keyframes drift3{to{transform:translate(-18vw,16vh) scale(1.6)}}
-
-
 
 .bar{position:fixed;top:0;left:0;height:6px;width:100%;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,var(--cy),var(--acc),var(--acc2));z-index:5;transition:transform .7s cubic-bezier(.2,.9,.2,1)}
 
-
-
 .deck{height:calc(100% - 96px);position:relative;z-index:1}
-
 .slide{position:absolute;inset:0;padding:24px 6vw;display:none;flex-direction:column;justify-content:center;gap:24px;overflow-y:auto}
-
 .slide.on{display:flex}
-
 h1{font-size:clamp(44px,7vw,84px);line-height:1.05;margin:0;letter-spacing:-.02em;background:linear-gradient(100deg,var(--ink) 20%,var(--cy) 45%,var(--acc) 60%,var(--ink) 80%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
-
 h2{font-size:clamp(36px,5vw,56px);margin:0;color:var(--acc);letter-spacing:-.01em}
-
 h2.bad{color:var(--bad)}
-
 p{margin:0;max-width:30em}
-
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;perspective:700px}
-
 .box{background:var(--card);border:3px solid var(--ln);border-radius:12px;padding:6px 12px;font-size:1rem;display:inline-flex;overflow:hidden;white-space:nowrap;transition:max-width .6s ease,padding .6s ease,margin .6s ease,border-width .6s ease,opacity .6s ease,background .3s,color .3s,transform .3s,box-shadow .3s;max-width:200px;box-shadow:0 6px 0 var(--ln),0 14px 24px #0b244722;backdrop-filter:blur(6px)}
-
 .box .z{display:inline-block;max-width:3em;overflow:hidden;color:var(--bad);transition:all .6s ease}
-
 .box.gone{max-width:0;padding-left:0;padding-right:0;margin-left:-10px;border-width:0;opacity:0;box-shadow:none}
-
 .box.dc{color:var(--acc);border-color:var(--acc);box-shadow:0 6px 0 var(--acc),0 14px 24px #d9480f33}
-
 .box.hl{background:var(--cy);color:#fff;transform:translateY(-12px) scale(1.12);box-shadow:0 12px 0 var(--ln),0 0 30px var(--cy)}
-
 .sep{font-size:1rem;opacity:.6}
-
 button{font:inherit;font-size:1rem;background:linear-gradient(120deg,var(--acc),var(--acc2));color:#fff;border:0;border-radius:12px;padding:8px 20px;cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden;box-shadow:0 5px 0 #0b24472e,0 10px 22px #d9480f44}
-
 button:before{content:"";position:absolute;top:0;left:-70%;width:50%;height:100%;background:linear-gradient(100deg,transparent,#ffffff88,transparent);transform:skewX(-20deg);animation:shine 3.2s ease-in-out infinite}
-
 button:hover{transform:translateY(-3px) scale(1.06)}
-
 button:active{transform:translateY(2px) scale(.96)}
-
 button:focus-visible{outline:4px solid var(--cy);outline-offset:3px}
-
 button.alt{background:var(--card);color:var(--ink);border:3px solid var(--ln);box-shadow:0 5px 0 var(--ln)}
-
 button.alt:before{display:none}
-
 .out{min-height:1.4em}
-
 .bad{color:var(--bad)}.good{color:var(--ok)}
 
-
-
 /* red animada */
-
 .net{position:relative;height:90px;margin-top:10px}
-
 .net:before{content:"";position:absolute;left:0;right:0;top:44px;height:6px;background:repeating-linear-gradient(90deg,var(--ln) 0 18px,transparent 18px 32px);background-size:32px 6px;border-radius:3px;animation:dash 0.8s linear infinite}
-
 .node{position:absolute;top:20px;width:54px;height:54px;border-radius:50%;background:var(--card);border:6px solid var(--cy);animation:ping 2s ease-out infinite}
-
 .pk{position:absolute;top:26px;left:0;background:var(--acc);color:#fff;border-radius:8px;padding:0 10px;font-size:1rem;animation:go 5s cubic-bezier(.45,0,.55,1) infinite;box-shadow:0 0 18px var(--acc),-26px 0 22px -8px var(--acc)}
-
 .pk:nth-child(3){animation-delay:-1.7s;background:var(--cy);box-shadow:0 0 18px var(--cy),-26px 0 22px -8px var(--cy)}
-
 .pk:nth-child(4){animation-delay:-3.4s;background:var(--acc2);color:#0b2447;box-shadow:0 0 18px var(--acc2),-26px 0 22px -8px var(--acc2)}
-
 @keyframes go{from{left:0;opacity:0;transform:scale(.4) rotate(-8deg)}10%{opacity:1;transform:scale(1.15) rotate(0)}50%{transform:translateY(-14px) scale(1)}90%{opacity:1;transform:translateY(0)}to{left:calc(100% - 110px);opacity:0;transform:scale(.4) rotate(8deg)}}
-
 @keyframes dash{to{background-position:32px 0}}
-
 @keyframes ping{0%{box-shadow:0 0 0 0 var(--cy)}80%,100%{box-shadow:0 0 0 26px #0a8ea500}}
-
 @keyframes shine{0%,55%{left:-70%}100%{left:130%}}
 
-
-
 .bits{display:flex;flex-wrap:wrap;gap:10px}
-
 nav{height:96px;display:flex;align-items:center;justify-content:space-between;padding:0 6vw;gap:12px;position:relative;z-index:2}
-
 .dots{display:flex;gap:10px;align-items:center}
-
 .dots i{width:16px;height:16px;border-radius:99px;background:var(--ln);opacity:.3;transition:all .4s cubic-bezier(.3,1.6,.5,1)}
-
 .dots i.on{opacity:1;background:var(--acc);width:44px}
-
 .q{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
-
 .q button.alt{text-align:left}
 
-
-
 /* entradas con movimiento */
-
 @keyframes rise{from{opacity:0;transform:translateY(70px) skewY(4deg)}}
-
 @keyframes pop{from{opacity:0;transform:scale(.3) rotate(-14deg) translateY(40px)}60%{transform:scale(1.12) rotate(3deg)}}
-
 @keyframes flip{from{opacity:0;transform:rotateX(-90deg) translateY(30px)}70%{transform:rotateX(12deg)}}
-
 @keyframes bob{50%{translate:0 -8px}}
-
 @keyframes wave{0%,100%{translate:0 0;rotate:0deg}25%{translate:0 -7px;rotate:-1.5deg}75%{translate:0 5px;rotate:1.5deg}}
-
 @keyframes flow{to{background-position:-250% 0}}
-
 @keyframes beat{50%{scale:1.08}}
-
 @keyframes slideL{from{opacity:0;transform:translateX(-120px)}}
-
 @keyframes sway{50%{transform:translateX(10px)}}
-
 @keyframes shake{20%{transform:translateX(-12px)}40%{transform:translateX(10px)}60%{transform:translateX(-7px)}80%{transform:translateX(4px)}}
-
 @keyframes cheer{0%{transform:scale(.6);opacity:0}50%{transform:scale(1.25)}100%{transform:scale(1);opacity:1}}
-
 @keyframes swing{0%,100%{rotate:-1.2deg}50%{rotate:1.2deg}}
-
 .slide.on>*{animation:rise .8s cubic-bezier(.2,.9,.2,1) backwards;animation-delay:calc(var(--i,0)*.16s)}
-
 .slide.on>h1{animation:rise .9s cubic-bezier(.2,.9,.2,1) backwards,flow 6s linear 1s infinite;transform-origin:left bottom}
-
 .slide.on>h2{animation:rise .8s cubic-bezier(.2,.9,.2,1) backwards,swing 5s ease-in-out 1s infinite;transform-origin:left center}
-
 .slide.on .row>.box,.slide.on .row>.sep{animation:flip .7s cubic-bezier(.2,.9,.2,1) backwards,wave 3.4s ease-in-out infinite;animation-delay:calc(.35s + var(--j,0)*.08s),calc(var(--j,0)*.22s)}
-
 .slide.on .q>*{animation:pop .65s backwards,sway 3.6s ease-in-out infinite;animation-delay:calc(.4s + var(--j,0)*.14s),calc(var(--j,0)*.5s)}
-
 .slide.on .row>button{animation:pop .65s backwards,beat 2s ease-in-out infinite;animation-delay:.6s,1.3s}
-
 .slide.on>.mono.bad{animation:rise .8s backwards,shake 1.6s ease-in-out 1s infinite}
-
 .slide.on>.who{animation:slideL .9s cubic-bezier(.2,.9,.2,1) backwards;animation-delay:.9s}
-
 .who{border-left:8px solid var(--acc);padding-left:18px;display:flex;flex-direction:column;gap:6px;background:linear-gradient(90deg,var(--card),transparent);border-radius:0 12px 12px 0;padding-top:8px;padding-bottom:8px}
-
 .who b{font-size:1rem;color:var(--cy)}
-
 .dots i.on{animation:beat 1.2s ease-in-out infinite}
-
 .out.good,.out.bad{animation:cheer .5s}
-
 .out.bad.err{animation:shake .5s}
-
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-
 </style>
-
 </head>
-
 <body>
-
 <div class="bg"><i></i><i></i><i></i></div>
-
 <div class="bar" id="bar"></div>
-
 <div class="deck">
 
-
-
 <section class="slide on">
-
   <h1>IPv6: reglas de direccionamiento y sintaxis</h1>
-
   <p>Teleinformática · 3.3</p>
-
   <div class="who"><b>Integrantes</b><span>LUIS ALEJANDRO GONZALES CEDEÑO</span><span>ALEXANDRA JAMILETH ZURITA HERRERA</span></div>
-
   <div class="net"><div class="node" style="left:0"></div><div class="node" style="right:0"></div>
-
     <span class="pk mono">2001</span><span class="pk mono">db8</span><span class="pk mono">::1</span></div>
-
 </section>
 
-
-
 <section class="slide">
-
   <h2>Una dirección, 128 bits</h2>
-
   <p>8 hextetos × 16 bits = 128 bits. Toca un hexteto.</p>
-
   <div class="row" id="hx"></div>
-
   <p class="out" id="hxo">Cada hexteto son 4 dígitos hexadecimales.</p>
-
 </section>
 
-
-
 <section class="slide">
-
   <h2>Regla 1: omite ceros a la izquierda</h2>
-
   <div class="row" id="r1"></div>
-
   <p class="out" id="r1o">Los ceros de la derecha o del medio se conservan.</p>
-
   <div class="row"><button id="b1">Aplicar regla 1</button></div>
-
 </section>
 
-
-
 <section class="slide">
-
   <h2>Regla 2: comprime con ::</h2>
-
   <div class="row" id="r2"></div>
-
   <p class="out" id="r2o">Hextetos de ceros seguidos se reemplazan por ::</p>
-
   <div class="row"><button id="b2">Comprimir</button></div>
-
 </section>
 
-
-
 <section class="slide">
-
   <h2 class="bad">Restricción crítica: :: una sola vez</h2>
-
   <div class="mono bad" style="font-size:1.3rem">2001::1::5</div>
-
   <p>Faltan 5 hextetos de ceros. ¿Cómo se reparten?</p>
-
   <div class="row" id="amb"></div>
-
   <div class="row"><button id="b3">Probar otro reparto</button></div>
-
   <p class="good out">Correcto: <span class="mono">2001:0:0:1::5</span> (comprime solo el grupo más largo)</p>
-
 </section>
-
-
 
 <section class="slide">
-
   <h2>Pon a prueba tu red</h2>
-
   <p>¿Cuál dirección es válida?</p>
-
   <div class="q" id="qz"></div>
-
   <p class="out" id="qo"></p>
-
 </section>
-
-
 
 </div>
-
 <nav>
-
   <button class="alt" id="prev" aria-label="Anterior">Atrás</button>
-
   <div class="dots" id="dots"></div>
-
   <button id="next" aria-label="Siguiente">Siguiente</button>
-
 </nav>
 
-
-
 <script>
-
 const S=[...document.querySelectorAll('.slide')],D=document.getElementById('dots');
-
 let cur=0;S.forEach(()=>D.appendChild(document.createElement('i')));
-
 function go(n){cur=Math.max(0,Math.min(S.length-1,n));S.forEach((s,i)=>s.classList.toggle('on',i===cur));[...D.children].forEach((d,i)=>d.classList.toggle('on',i===cur));
-
 bar.style.transform='scaleX('+(cur+1)/S.length+')';
-
 prev.style.visibility=cur?'visible':'hidden';next.style.visibility=cur<S.length-1?'visible':'hidden'}
-
 prev.onclick=()=>go(cur-1);next.onclick=()=>go(cur+1);
-
 addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
-
 const H=['2001','0db8','0000','0000','0000','0000','0000','0001'];
-
 const mk=(h)=>{const b=document.createElement('span');b.className='box mono';b.innerHTML=h;return b};
-
 const sepEl=()=>{const s=document.createElement('span');s.className='sep mono';s.textContent=':';return s};
-
 // slide 2
-
 const hx=document.getElementById('hx');
-
 H.forEach((h,i)=>{const b=mk(h);b.style.cursor='pointer';b.onclick=()=>{[...hx.children].forEach(c=>c.classList.remove('hl'));b.classList.add('hl');hxo.textContent='Hexteto '+(i+1)+': 4 hex = 16 bits. Acumulado: '+(i+1)*16+' bits.'};hx.appendChild(b);if(i<7)hx.appendChild(sepEl())});
-
 // slide 3
-
 const r1=document.getElementById('r1');
-
 H.forEach((h,i)=>{const t=h==='0000'?'000':h.match(/^0*/)[0];const rest=h.slice(t.length);const z=document.createElement('span');z.className='z';z.textContent=t;const b=mk('');b.appendChild(z);b.append(rest);r1.appendChild(b);if(i<7)r1.appendChild(sepEl())});
-
 let on1=false;b1.onclick=()=>{on1=!on1;[...r1.querySelectorAll('.z')].forEach(z=>{z.style.maxWidth=on1?'0':'';z.style.opacity=on1?0:1});b1.textContent=on1?'Deshacer':'Aplicar regla 1';r1o.textContent=on1?'Resultado: 2001:db8:0:0:0:0:0:1':'Los ceros de la derecha o del medio se conservan.'};
-
 // slide 4
-
 const R=['2001','db8','0','0','0','0','0','1'],r2=document.getElementById('r2'),zs=[];
-
 R.forEach((h,i)=>{const b=mk(h);r2.appendChild(b);if(h==='0')zs.push(b);if(i<7){const s=sepEl();r2.appendChild(s);if(h==='0'&&i<6)zs.push(s)}});
-
 const dc=mk('::');dc.classList.add('dc','gone');r2.insertBefore(dc,r2.children[4]);
-
 let on2=false;b2.onclick=()=>{on2=!on2;zs.forEach(z=>z.classList.toggle('gone',on2));dc.classList.toggle('gone',!on2);b2.textContent=on2?'Descomprimir':'Comprimir';r2o.textContent=on2?'Resultado final: 2001:db8::1':'Hextetos de ceros seguidos se reemplazan por ::'};
-
 // slide 5
-
 const amb=document.getElementById('amb');let n=1;
-
 function drawAmb(){amb.innerHTML='';const parts=['2001',...Array(n).fill('0'),'1',...Array(5-n).fill('0'),'5'];parts.forEach((p,i)=>{const b=mk(p);if(p==='0')b.classList.add('dc');b.style.setProperty('--j',i);amb.appendChild(b)});}
-
 drawAmb();b3.onclick=()=>{n=n%4+1;drawAmb()};
-
 // slide 6
-
 const opts=[['2001::db8::1',0],['2001:db8::1',1],['2001:db8:::1',0]],qz=document.getElementById('qz');
-
 opts.forEach(([t,ok])=>{const b=document.createElement('button');b.className='alt mono';b.textContent=t;b.onclick=()=>{qo.className='out '+(ok?'good':'bad err');qo.style.animation='none';void qo.offsetWidth;qo.style.animation='';qo.textContent=ok?'Correcto: usa :: una sola vez.':'No: tiene :: repetido o mal escrito.'};qz.appendChild(b)});
-
 S.forEach(sl=>{[...sl.children].forEach((c,i)=>{c.style.setProperty('--i',i);[...c.children].forEach((k,j)=>k.style.setProperty('--j',j))})});
-
 go(0);
-
 </script>
-
 </body>
-
 </html>
