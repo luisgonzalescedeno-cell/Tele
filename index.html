@@ -1,196 +1,385 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>IPv6: Reglas de Direccionamiento y Sintaxis</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.1 Medios Guiados · Teleinformática</title>
 <style>
-:root{--bg:#eaf2fc;--bg2:#d5e5f8;--ink:#0b2447;--card:#ffffffd9;--acc:#d9480f;--acc2:#f59f00;--cy:#0a8ea5;--ok:#1b7f3b;--bad:#c92a2a;--ln:#19376d;--grid:#19376d1a;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#061125;--bg2:#0d2347;--ink:#e6f0ff;--card:#10294fd9;--acc:#ff8a3d;--acc2:#ffd166;--cy:#35d0e8;--ok:#5fd68a;--bad:#ff7b7b;--ln:#6f9be0;--grid:#6f9be01c}}
-:root[data-theme="dark"]{--bg:#061125;--bg2:#0d2347;--ink:#e6f0ff;--card:#10294fd9;--acc:#ff8a3d;--acc2:#ffd166;--cy:#35d0e8;--ok:#5fd68a;--bad:#ff7b7b;--ln:#6f9be0;--grid:#6f9be01c}
-html{scroll-padding-top:env(safe-area-inset-top,0px);font-size:clamp(17px,2.3vw,28px)}
-html,body{height:100%;margin:0}
-body{background:linear-gradient(160deg,var(--bg),var(--bg2));color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;font-size:1rem;overflow:hidden;line-height:1.35;position:relative}
-.mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700}
+:root{--ink:#0b1f44;--bl:#0057d9;--or:#e65100;--gr:#00875a;--rd:#d32f2f;--lb:#d7e6fb}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:clamp(16px,1.3vw,24px)}
+html,body{height:100%;overflow:hidden;color:var(--ink);background:#fff;font-family:'Bahnschrift','Segoe UI',system-ui,sans-serif}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(0,87,217,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(0,87,217,.14) 1px,transparent 1px),linear-gradient(rgba(0,87,217,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,87,217,.06) 1px,transparent 1px);background-size:100px 100px,100px 100px,20px 20px,20px 20px}
+#fr{position:fixed;inset:1.4vh 1.4vw;border:4px solid var(--ink);pointer-events:none;z-index:6}
+#scan{position:fixed;top:0;bottom:0;width:6px;left:-8px;background:var(--or);box-shadow:0 0 22px 4px rgba(230,81,0,.6);z-index:7;pointer-events:none}
+#scan.run{animation:sc .9s cubic-bezier(.6,0,.2,1)}@keyframes sc{from{left:0}to{left:100vw}}
+.sl{position:absolute;inset:0;padding:4.5vh 5vw 14vh 6.8vw;display:none;flex-direction:column;justify-content:center;overflow-y:auto}
+.sl.on{display:flex;animation:pl .8s cubic-bezier(.6,0,.2,1)}@keyframes pl{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0)}}
+.sl.on .a{animation:ft .6s backwards}@keyframes ft{from{opacity:0;transform:translateY(22px)}}
+.mono{font-family:Consolas,'Courier New',monospace;font-weight:700}
+.k{font:800 .8rem/1 Consolas,'Courier New',monospace;letter-spacing:.22em;color:var(--bl);margin-bottom:.9vh;text-transform:uppercase}
+h2{font-size:clamp(1.8rem,3.8vw,3.1rem);font-weight:300;text-transform:uppercase;letter-spacing:.04em;line-height:1.05;margin-bottom:1.6vh}
+h2 b{font-weight:900;color:var(--or)}
+p,li{font-size:clamp(.95rem,1.45vw,1.3rem);line-height:1.42;font-weight:500}
+b{font-weight:800}
+.sm{font-size:clamp(.85rem,1.25vw,1.12rem)}
+.bx{border:3px solid var(--ink);background:#fff;padding:12px 18px;position:relative;box-shadow:6px 6px 0 rgba(11,31,68,.16);transition:.3s}
+.bx.hl{border-color:var(--or);box-shadow:6px 6px 0 rgba(230,81,0,.35)}
+.bx:before{content:attr(data-t);position:absolute;top:-.8em;left:12px;background:#fff;padding:0 8px;font:800 .7rem Consolas,monospace;letter-spacing:.18em;color:var(--bl)}
+.bx p+p{margin-top:.5em}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:2.2vw;align-items:start}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.8vw}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:1.6vw}
+.stack>*+*{margin-top:1.8vh}
+.chip{display:inline-block;border:3px solid var(--or);color:var(--or);padding:4px 12px;margin:0 10px 8px 0;font:800 clamp(.8rem,1.15vw,1.02rem) Consolas,monospace;text-transform:uppercase}
+svg{max-width:100%;height:auto;display:block}
+.dw{stroke-dasharray:1;stroke-dashoffset:1;animation:dw 2s .4s forwards}@keyframes dw{to{stroke-dashoffset:0}}
+.sv{fill:none;stroke:var(--ink);stroke-width:3.5}
+.tx{fill:var(--ink);font:800 14px Consolas,monospace}
+.fl{stroke-dasharray:14 10;animation:fl 1s linear infinite}@keyframes fl{to{stroke-dashoffset:-48}}
+.or{color:var(--or)}.bl{color:var(--bl)}.gr{color:var(--gr)}.rd{color:var(--rd)}
+table{border-collapse:collapse;width:100%;font-size:clamp(.78rem,1.15vw,1.05rem)}
+th{background:var(--ink);color:#fff;text-align:left;padding:7px 10px;font:800 .8em Consolas,monospace;letter-spacing:.06em;text-transform:uppercase}
+td{border-bottom:2px solid #c8d4ea;padding:5px 10px;font-weight:600;background:#fff;transition:.25s}
+tr:nth-child(even) td{background:#f4f8fe}
+td:first-child{font-weight:800;color:var(--or)}
+tr.on td,tr.hl td{background:#ffe0b2!important}
+tr[data-k]{cursor:pointer}
+.sw{display:inline-block;width:1.7em;height:.7em;border:2px solid #000;vertical-align:middle;margin-right:6px}
+#rl{position:fixed;left:2.4vw;top:11vh;bottom:17vh;width:36px;display:flex;flex-direction:column;justify-content:space-between;z-index:8}
+#rl i{font:800 .72rem Consolas,monospace;font-style:normal;display:flex;align-items:center;gap:4px;color:#6b7aa0;cursor:pointer;transition:.3s}
+#rl i:before{content:"";width:10px;height:3px;background:currentColor;transition:.3s}
+#rl i.on{color:var(--or)}#rl i.on:before{width:24px;height:4px}
+#tb{position:fixed;right:2.2vw;bottom:2.2vh;z-index:9;display:grid;grid-template-columns:auto auto auto;border:3px solid var(--ink);background:#fff;font-size:.8rem;font-weight:700}
+#tb>div{padding:7px 14px;border-right:3px solid var(--ink)}#tb>div:last-child{border:0;display:flex;gap:6px;align-items:center}
+#tb small{display:block;color:var(--bl);font:800 .62rem Consolas,monospace;letter-spacing:.15em}
+#tb b{font-size:1.5rem;color:var(--or);font-family:Consolas,monospace}
+#tb button{width:36px;height:36px;border:3px solid var(--ink);background:#fff;color:var(--ink);font-size:1rem;cursor:pointer}#tb button:hover{background:var(--bl);color:#fff}
+.op{border:3px solid var(--ink);background:#fff;color:var(--ink);font:800 clamp(.8rem,1.15vw,1.02rem) Consolas,monospace;text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:.25s;text-align:left}
+.op:hover{background:var(--lb)}.op.on{background:var(--bl);color:#fff;box-shadow:4px 4px 0 var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+/* coaxial */
+.ly{transition:.3s}.ly.hot{stroke:var(--or)!important;stroke-width:8!important;filter:drop-shadow(0 0 8px var(--or))}
+#ly .op{display:flex;gap:10px;width:100%;margin-bottom:5px;padding:5px 12px}#ly .op b{color:var(--or)}#ly .op.on b{color:#fff}
+.emi{animation:emi 2.4s ease-in infinite}@keyframes emi{0%{transform:translateY(-50px);opacity:0}25%{opacity:1}55%{transform:translateY(0)}68%{transform:translateY(-14px)}100%{transform:translateY(-60px);opacity:0}}
+/* par trenzado */
+.nz{animation:nz 2.6s ease-in infinite}@keyframes nz{0%{transform:translateY(var(--y0));opacity:0}25%{opacity:1}60%{transform:translateY(0);opacity:1}100%{transform:translateY(0);opacity:0}}
+.bz{opacity:0}.utp .bz{animation:bu 2.4s infinite}.stp .bz{animation:bs 2.4s infinite}
+@keyframes bu{from{transform:translate(var(--sx),var(--sy));opacity:0}25%{opacity:1}to{transform:translate(0,0);opacity:.25}}
+@keyframes bs{from{transform:translate(var(--sx),var(--sy));opacity:0}25%{opacity:1}60%{transform:translate(calc(var(--sx)*.55),calc(var(--sy)*.55));opacity:1}to{transform:translate(calc(var(--sx)*.55),calc(var(--sy)*.55));opacity:0}}
+#shl{opacity:0;transition:.4s}.stp #shl{opacity:1}
+/* categorías */
+.trk{height:26px;background:#eef4fc;border:3px solid var(--ink);border-radius:14px;overflow:hidden;position:relative;margin:8px 0}
+.trk i{position:absolute;left:-16px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--or);animation:mv var(--d,2s) linear infinite;animation-delay:calc(var(--d,2s)*var(--n)*-.2)}
+@keyframes mv{to{left:100%}}
+/* ponchado */
+.asm{position:relative;height:34vh;border:3px solid var(--ink);background:#f4f8fe;overflow:hidden}
+.jk{position:absolute;left:0;top:18%;bottom:18%;width:17%;background:linear-gradient(#9aa7bd,#6e7d97);border-right:4px solid var(--ink);display:flex;align-items:center;justify-content:center;color:#fff;font:800 .8rem Consolas,monospace;writing-mode:vertical-rl}
+.wi{position:absolute;left:17%;width:52%;height:8%;top:calc(7% + var(--i)*11%);border:2px solid rgba(0,0,0,.55);transition:transform .9s cubic-bezier(.3,1.3,.5,1);transition-delay:calc(var(--i)*.1s);border-radius:6px;cursor:pointer}
+.s0 .wi{transform:translateY(var(--o)) rotate(var(--rt));width:44%}
+.wi.hl{outline:4px solid var(--or);z-index:3}
+.rj{position:absolute;right:3%;top:3%;bottom:3%;width:34%;transform:translateX(125%);transition:transform .9s cubic-bezier(.3,1,.4,1);background:rgba(190,220,255,.55);border:4px solid var(--ink);border-radius:8px;display:flex;align-items:flex-end;justify-content:center;font:800 .85rem Consolas,monospace;padding-bottom:4px;z-index:2}
+.s2 .rj,.s3 .rj{transform:none}.s3 .rj{animation:cr .7s .6s}@keyframes cr{40%{transform:scaleX(.9) scaleY(.94);background:rgba(230,81,0,.4)}}
+.pln{position:absolute;right:6%;width:28%;height:20%;top:-24%;background:var(--ink);transition:top .6s;z-index:4;color:#fff;font:800 .8rem Consolas,monospace;display:flex;align-items:center;justify-content:center;border-radius:0 0 10px 10px}
+.s3 .pln{top:0}
+#stg{margin-top:1vh;font:800 clamp(.9rem,1.4vw,1.25rem) Consolas,monospace;color:var(--bl);min-height:1.6em}
+/* conectores / empalmes */
+.ps{animation:plug 3.2s ease-in-out infinite}@keyframes plug{0%{transform:translateX(-90px)}35%,72%{transform:translateX(0)}100%{transform:translateX(-90px)}}
+.rt{transform-box:fill-box;transform-origin:center;animation:rot 3.2s ease-in-out infinite}@keyframes rot{0%,35%{transform:rotate(0)}50%,72%{transform:rotate(90deg)}100%{transform:rotate(0)}}
+.clk{opacity:0;animation:clk 3.2s infinite}@keyframes clk{0%,34%{opacity:0;transform:scale(.5)}40%,55%{opacity:1;transform:scale(1.1)}65%,100%{opacity:0}}
+.fa{animation:fa 4s ease-in-out infinite}@keyframes fa{0%{transform:translateX(-60px)}35%,100%{transform:translateX(0)}}
+.fb{animation:fb 4s ease-in-out infinite}@keyframes fb{0%{transform:translateX(60px)}35%,100%{transform:translateX(0)}}
+.sk{opacity:0;animation:sk 4s infinite;transform-box:fill-box;transform-origin:center}@keyframes sk{0%,32%{opacity:0;transform:scale(.3)}38%{opacity:1;transform:scale(1.3)}46%{opacity:.8;transform:scale(1)}60%,100%{opacity:0}}
+.gl{opacity:0;animation:gl 4s infinite}@keyframes gl{0%,36%{opacity:0}46%,92%{opacity:1}100%{opacity:0}}
+.pr{animation:pr 4s ease-in-out infinite}@keyframes pr{0%,40%{transform:translateY(-18px)}55%,90%{transform:translateY(0)}100%{transform:translateY(-18px)}}
+.ls{margin-top:8px}.ls .bar{height:22px;border:3px solid var(--ink);background:#eef4fc;margin-top:6px}.ls .bar i{display:block;height:100%;width:0;animation:lb 1.4s .8s forwards;background:var(--gr)}.ls.m .bar i{background:var(--rd)}
+@keyframes lb{to{width:var(--w)}}
+/* microondas */
+.hill{transform-box:fill-box;transform-origin:bottom;transform:scaleY(0);transition:transform .9s cubic-bezier(.3,1.3,.5,1)}.ob .hill{transform:scaleY(1)}
+.gOB{display:none}.ob .gOB{display:inline}.ob .gOK{display:none}
+.wv{fill:none;stroke:var(--or);stroke-width:4}
+.mt{height:24px;border:3px solid var(--ink);background:#eef4fc;margin:6px 0}.mt i{display:block;height:100%;width:94%;background:var(--gr);transition:.9s}.ob .mt i{width:14%;background:var(--rd)}
+@media(max-width:800px){.g2,.g3,.g4{grid-template-columns:1fr}#rl{display:none}}
 
-/* fondo vivo */
-.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.bg:before{content:"";position:absolute;inset:-60px;background-image:linear-gradient(var(--grid) 2px,transparent 2px),linear-gradient(90deg,var(--grid) 2px,transparent 2px);background-size:60px 60px;animation:grid 6s linear infinite}
-.bg i{position:absolute;border-radius:50%;filter:blur(60px);opacity:.45}
-.bg i:nth-child(1){width:42vmax;height:42vmax;background:var(--cy);left:-12vmax;top:-10vmax;animation:drift1 14s ease-in-out infinite alternate}
-.bg i:nth-child(2){width:36vmax;height:36vmax;background:var(--acc);right:-10vmax;bottom:-12vmax;animation:drift2 11s ease-in-out infinite alternate}
-.bg i:nth-child(3){width:22vmax;height:22vmax;background:var(--acc2);left:45%;top:35%;opacity:.25;animation:drift3 9s ease-in-out infinite alternate}
-@keyframes grid{to{transform:translate(60px,60px)}}
-@keyframes drift1{to{transform:translate(30vw,22vh) scale(1.3)}}
-@keyframes drift2{to{transform:translate(-32vw,-20vh) scale(1.2)}}
-@keyframes drift3{to{transform:translate(-18vw,16vh) scale(1.6)}}
-
-.bar{position:fixed;top:0;left:0;height:6px;width:100%;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,var(--cy),var(--acc),var(--acc2));z-index:5;transition:transform .7s cubic-bezier(.2,.9,.2,1)}
-
-.deck{height:calc(100% - 96px);position:relative;z-index:1}
-.slide{position:absolute;inset:0;padding:24px 6vw;display:none;flex-direction:column;justify-content:center;gap:24px;overflow-y:auto}
-.slide.on{display:flex}
-h1{font-size:clamp(44px,7vw,84px);line-height:1.05;margin:0;letter-spacing:-.02em;background:linear-gradient(100deg,var(--ink) 20%,var(--cy) 45%,var(--acc) 60%,var(--ink) 80%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
-h2{font-size:clamp(36px,5vw,56px);margin:0;color:var(--acc);letter-spacing:-.01em}
-h2.bad{color:var(--bad)}
-p{margin:0;max-width:30em}
-.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;perspective:700px}
-.box{background:var(--card);border:3px solid var(--ln);border-radius:12px;padding:6px 12px;font-size:1rem;display:inline-flex;overflow:hidden;white-space:nowrap;transition:max-width .6s ease,padding .6s ease,margin .6s ease,border-width .6s ease,opacity .6s ease,background .3s,color .3s,transform .3s,box-shadow .3s;max-width:200px;box-shadow:0 6px 0 var(--ln),0 14px 24px #0b244722;backdrop-filter:blur(6px)}
-.box .z{display:inline-block;max-width:3em;overflow:hidden;color:var(--bad);transition:all .6s ease}
-.box.gone{max-width:0;padding-left:0;padding-right:0;margin-left:-10px;border-width:0;opacity:0;box-shadow:none}
-.box.dc{color:var(--acc);border-color:var(--acc);box-shadow:0 6px 0 var(--acc),0 14px 24px #d9480f33}
-.box.hl{background:var(--cy);color:#fff;transform:translateY(-12px) scale(1.12);box-shadow:0 12px 0 var(--ln),0 0 30px var(--cy)}
-.sep{font-size:1rem;opacity:.6}
-button{font:inherit;font-size:1rem;background:linear-gradient(120deg,var(--acc),var(--acc2));color:#fff;border:0;border-radius:12px;padding:8px 20px;cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden;box-shadow:0 5px 0 #0b24472e,0 10px 22px #d9480f44}
-button:before{content:"";position:absolute;top:0;left:-70%;width:50%;height:100%;background:linear-gradient(100deg,transparent,#ffffff88,transparent);transform:skewX(-20deg);animation:shine 3.2s ease-in-out infinite}
-button:hover{transform:translateY(-3px) scale(1.06)}
-button:active{transform:translateY(2px) scale(.96)}
-button:focus-visible{outline:4px solid var(--cy);outline-offset:3px}
-button.alt{background:var(--card);color:var(--ink);border:3px solid var(--ln);box-shadow:0 5px 0 var(--ln)}
-button.alt:before{display:none}
-.out{min-height:1.4em}
-.bad{color:var(--bad)}.good{color:var(--ok)}
-
-/* red animada */
-.net{position:relative;height:90px;margin-top:10px}
-.net:before{content:"";position:absolute;left:0;right:0;top:44px;height:6px;background:repeating-linear-gradient(90deg,var(--ln) 0 18px,transparent 18px 32px);background-size:32px 6px;border-radius:3px;animation:dash 0.8s linear infinite}
-.node{position:absolute;top:20px;width:54px;height:54px;border-radius:50%;background:var(--card);border:6px solid var(--cy);animation:ping 2s ease-out infinite}
-.pk{position:absolute;top:26px;left:0;background:var(--acc);color:#fff;border-radius:8px;padding:0 10px;font-size:1rem;animation:go 5s cubic-bezier(.45,0,.55,1) infinite;box-shadow:0 0 18px var(--acc),-26px 0 22px -8px var(--acc)}
-.pk:nth-child(3){animation-delay:-1.7s;background:var(--cy);box-shadow:0 0 18px var(--cy),-26px 0 22px -8px var(--cy)}
-.pk:nth-child(4){animation-delay:-3.4s;background:var(--acc2);color:#0b2447;box-shadow:0 0 18px var(--acc2),-26px 0 22px -8px var(--acc2)}
-@keyframes go{from{left:0;opacity:0;transform:scale(.4) rotate(-8deg)}10%{opacity:1;transform:scale(1.15) rotate(0)}50%{transform:translateY(-14px) scale(1)}90%{opacity:1;transform:translateY(0)}to{left:calc(100% - 110px);opacity:0;transform:scale(.4) rotate(8deg)}}
-@keyframes dash{to{background-position:32px 0}}
-@keyframes ping{0%{box-shadow:0 0 0 0 var(--cy)}80%,100%{box-shadow:0 0 0 26px #0a8ea500}}
-@keyframes shine{0%,55%{left:-70%}100%{left:130%}}
-
-.bits{display:flex;flex-wrap:wrap;gap:10px}
-nav{height:96px;display:flex;align-items:center;justify-content:space-between;padding:0 6vw;gap:12px;position:relative;z-index:2}
-.dots{display:flex;gap:10px;align-items:center}
-.dots i{width:16px;height:16px;border-radius:99px;background:var(--ln);opacity:.3;transition:all .4s cubic-bezier(.3,1.6,.5,1)}
-.dots i.on{opacity:1;background:var(--acc);width:44px}
-.q{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
-.q button.alt{text-align:left}
-
-/* entradas con movimiento */
-@keyframes rise{from{opacity:0;transform:translateY(70px) skewY(4deg)}}
-@keyframes pop{from{opacity:0;transform:scale(.3) rotate(-14deg) translateY(40px)}60%{transform:scale(1.12) rotate(3deg)}}
-@keyframes flip{from{opacity:0;transform:rotateX(-90deg) translateY(30px)}70%{transform:rotateX(12deg)}}
-@keyframes bob{50%{translate:0 -8px}}
-@keyframes wave{0%,100%{translate:0 0;rotate:0deg}25%{translate:0 -7px;rotate:-1.5deg}75%{translate:0 5px;rotate:1.5deg}}
-@keyframes flow{to{background-position:-250% 0}}
-@keyframes beat{50%{scale:1.08}}
-@keyframes slideL{from{opacity:0;transform:translateX(-120px)}}
-@keyframes sway{50%{transform:translateX(10px)}}
-@keyframes shake{20%{transform:translateX(-12px)}40%{transform:translateX(10px)}60%{transform:translateX(-7px)}80%{transform:translateX(4px)}}
-@keyframes cheer{0%{transform:scale(.6);opacity:0}50%{transform:scale(1.25)}100%{transform:scale(1);opacity:1}}
-@keyframes swing{0%,100%{rotate:-1.2deg}50%{rotate:1.2deg}}
-.slide.on>*{animation:rise .8s cubic-bezier(.2,.9,.2,1) backwards;animation-delay:calc(var(--i,0)*.16s)}
-.slide.on>h1{animation:rise .9s cubic-bezier(.2,.9,.2,1) backwards,flow 6s linear 1s infinite;transform-origin:left bottom}
-.slide.on>h2{animation:rise .8s cubic-bezier(.2,.9,.2,1) backwards,swing 5s ease-in-out 1s infinite;transform-origin:left center}
-.slide.on .row>.box,.slide.on .row>.sep{animation:flip .7s cubic-bezier(.2,.9,.2,1) backwards,wave 3.4s ease-in-out infinite;animation-delay:calc(.35s + var(--j,0)*.08s),calc(var(--j,0)*.22s)}
-.slide.on .q>*{animation:pop .65s backwards,sway 3.6s ease-in-out infinite;animation-delay:calc(.4s + var(--j,0)*.14s),calc(var(--j,0)*.5s)}
-.slide.on .row>button{animation:pop .65s backwards,beat 2s ease-in-out infinite;animation-delay:.6s,1.3s}
-.slide.on>.mono.bad{animation:rise .8s backwards,shake 1.6s ease-in-out 1s infinite}
-.slide.on>.who{animation:slideL .9s cubic-bezier(.2,.9,.2,1) backwards;animation-delay:.9s}
-.who{border-left:8px solid var(--acc);padding-left:18px;display:flex;flex-direction:column;gap:6px;background:linear-gradient(90deg,var(--card),transparent);border-radius:0 12px 12px 0;padding-top:8px;padding-bottom:8px}
-.who b{font-size:1rem;color:var(--cy)}
-.dots i.on{animation:beat 1.2s ease-in-out infinite}
-.out.good,.out.bad{animation:cheer .5s}
-.out.bad.err{animation:shake .5s}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:root{--ink:#000}
+body:before{background-image:linear-gradient(rgba(230,81,0,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(230,81,0,.14) 1px,transparent 1px),linear-gradient(rgba(230,81,0,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(230,81,0,.06) 1px,transparent 1px)}
+.k{font-size:1.15rem;color:#000}
+h2{font-size:clamp(2.2rem,4.6vw,4rem)}
+h2 b,b.or{color:#000;text-decoration:underline;text-decoration-color:var(--or);text-decoration-thickness:.12em;text-underline-offset:.12em}
+.or,.bl,.gr,.rd{color:#000}
+p,li{font-size:clamp(1.3rem,1.9vw,2rem)}
+.sm{font-size:clamp(1.25rem,1.75vw,1.85rem)}
+.bx{padding:14px 20px}.bx:before{font-size:1rem;color:#000;top:-.9em}
+.bx>b{display:block;margin-top:6px;font-size:clamp(1.2rem,1.8vw,1.9rem)}
+.chip{color:#000;font-size:clamp(1.1rem,1.6vw,1.6rem)}
+.tx{fill:#000!important;font-size:16px}
+table{font-size:clamp(1.1rem,1.5vw,1.6rem)}
+th{background:#ffb74d;color:#000}td,td:first-child{color:#000}
+.op{font-size:clamp(1rem,1.5vw,1.5rem)}.op:hover{background:#ffe0b2}.op.on{background:#ffb74d;color:#000}
+#ly .op b,#ly .op.on b{color:#000}
+.ls .mono{font-size:clamp(1.2rem,1.7vw,1.7rem)}
+#stg{font-size:clamp(1.2rem,1.9vw,1.9rem);color:#000}
+#rl i{color:#444;font-size:.9rem}#rl i.on{color:#000}
+#tb{font-size:1rem}#tb small,#tb b{color:#000}#tb button:hover{background:#ffb74d;color:#000}
 </style>
 </head>
 <body>
-<div class="bg"><i></i><i></i><i></i></div>
-<div class="bar" id="bar"></div>
-<div class="deck">
+<div id="fr"></div><div id="scan"></div><div id="rl"></div>
+<div id="tb"><div><small>UTLVTE · TELEINFORMÁTICA</small>Unidad 4 · 4.1 Medios guiados</div><div><small>LÁMINA</small><b id="nm"></b></div><div><button id="pv">◀</button><button id="nx">▶</button></div></div>
+<svg width="0" height="0" style="position:absolute"><defs>
+ <pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="10" stroke="#e65100" stroke-width="4"/></pattern>
+ <symbol id="bolt" viewBox="0 0 20 30"><polygon points="12,0 2,16 9,16 6,30 18,11 11,11" fill="#e65100" stroke="#0b1f44" stroke-width="1.5"/></symbol>
+ <radialGradient id="arc"><stop offset="0" stop-color="#fff"/><stop offset=".4" stop-color="#ffd54a"/><stop offset="1" stop-color="rgba(230,81,0,0)"/></radialGradient></defs></svg>
 
-<section class="slide on">
-  <h1>IPv6: reglas de direccionamiento y sintaxis</h1>
-  <p>Teleinformática · 3.3</p>
-  <div class="who"><b>Integrantes</b><span>LUIS ALEJANDRO GONZALES CEDEÑO</span><span>ALEXANDRA JAMILETH ZURITA HERRERA</span></div>
-  <div class="net"><div class="node" style="left:0"></div><div class="node" style="right:0"></div>
-    <span class="pk mono">2001</span><span class="pk mono">db8</span><span class="pk mono">::1</span></div>
+<!-- 1 · 4.1 Medios guiados -->
+<section class="sl" data-n="Medios guiados">
+  <div class="k a">Unidad 4 · Medios de transmisión</div>
+  <h2 class="a" style="font-size:clamp(2.2rem,5.4vw,4.6rem)">4.1 Medios <b>guiados</b></h2>
+  <div class="bx a" data-t="DEFINICIÓN" style="margin-bottom:3vh">
+    <p>Conducen la señal por un <b class="or">camino físico</b> (cables).</p>
+    <div style="margin-top:8px"><span class="chip">Alto ancho de banda</span><span class="chip">Baja tasa de error</span><span class="chip">Confinamiento de la señal</span></div>
+  </div>
+  <div class="g4">
+    <div class="bx a" data-t="01"><svg viewBox="0 0 200 60"><rect x="5" y="16" width="190" height="26" fill="#d7e6fb" stroke="#0b1f44" stroke-width="3"/><line x1="5" y1="29" x2="195" y2="29" stroke="#e65100" stroke-width="6"/><circle r="7" cy="29" fill="#0057d9"><animateMotion dur="1.8s" repeatCount="indefinite" path="M5 0 L195 0"/></circle><circle r="7" cy="29" fill="#0057d9"><animateMotion dur="1.8s" begin="-.9s" repeatCount="indefinite" path="M5 0 L195 0"/></circle></svg><b class="or">Cable coaxial</b></div>
+    <div class="bx a" data-t="02"><svg viewBox="0 0 200 60"><path class="fl" fill="none" stroke="#e65100" stroke-width="6" d="M0 30 C15 2,35 2,50 30 S85 58,100 30 S135 2,150 30 S185 58,200 30"/><path class="fl" fill="none" stroke="#0057d9" stroke-width="6" d="M0 30 C15 58,35 58,50 30 S85 2,100 30 S135 58,150 30 S185 2,200 30"/></svg><b class="or">Cable de par trenzado</b></div>
+    <div class="bx a" data-t="03"><svg viewBox="0 0 200 60"><rect x="5" y="8" width="190" height="44" fill="#d7e6fb" stroke="#0b1f44" stroke-width="3"/><path d="M5 30 L35 12 L65 48 L95 12 L125 48 L155 12 L185 48 L195 30" fill="none" stroke="#e65100" stroke-width="3" stroke-dasharray="6 5"/><circle r="7" fill="#0057d9"><animateMotion dur="2s" repeatCount="indefinite" path="M5 30 L35 12 L65 48 L95 12 L125 48 L155 12 L185 48 L195 30"/></circle></svg><b class="or">Fibra óptica</b></div>
+    <div class="bx a" data-t="04"><svg viewBox="0 0 200 60"><path d="M20 58V10M180 58V10" stroke="#0b1f44" stroke-width="5"/><g fill="none" stroke="#e65100" stroke-width="4"><circle cx="24" cy="22" r="5"><animate attributeName="r" values="5;60" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="2s" repeatCount="indefinite"/></circle><circle cx="24" cy="22" r="5"><animate attributeName="r" values="5;60" dur="2s" begin="-1s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="2s" begin="-1s" repeatCount="indefinite"/></circle></g></svg><b class="or">Enlaces de microondas terrestres</b></div>
+  </div>
 </section>
 
-<section class="slide">
-  <h2>Una dirección, 128 bits</h2>
-  <p>8 hextetos × 16 bits = 128 bits. Toca un hexteto.</p>
-  <div class="row" id="hx"></div>
-  <p class="out" id="hxo">Cada hexteto son 4 dígitos hexadecimales.</p>
+<!-- 2 · Coaxial -->
+<section class="sl" data-n="Coaxial">
+  <div class="k a">4.1 · 1</div>
+  <h2 class="a" style="margin-bottom:1vh">1. Cable <b>coaxial</b></h2>
+  <div class="g2" style="grid-template-columns:.8fr 1.2fr">
+    <div class="a">
+      <svg viewBox="0 0 300 300" style="max-height:22vh;margin:0 auto 1vh"><g class="sv">
+        <circle class="ly dw" id="L3" pathLength="1" cx="150" cy="150" r="140" fill="#d7e6fb"/>
+        <circle class="ly dw" id="L2" pathLength="1" style="animation-delay:.4s" cx="150" cy="150" r="108" fill="url(#hatch)" stroke-width="9"/>
+        <circle class="ly dw" id="L1" pathLength="1" style="animation-delay:.8s" cx="150" cy="150" r="84" fill="#fff"/>
+        <circle class="ly dw" id="L0" pathLength="1" style="animation-delay:1.2s" cx="150" cy="150" r="26" fill="#e65100"/></g></svg>
+      <div id="ly"><button class="op"><b>1</b>Conductor central de cobre</button><button class="op"><b>2</b>Aislante dieléctrico</button><button class="op"><b>3</b>Malla · blindaje EMI</button><button class="op"><b>4</b>Cubierta PVC / LSZH</button></div>
+    </div>
+    <div class="stack a">
+      <p class="sm">La <b class="or">malla</b> bloquea la interferencia (EMI).</p>
+      <div class="bx" data-t="IMPEDANCIA">
+        <p class="sm"><b class="or">50 Ω:</b> datos y radiofrecuencia.</p>
+        <p class="sm"><b class="or">75 Ω:</b> TV por cable y video.</p>
+      </div>
+      <div class="bx" data-t="CONECTORES PRINCIPALES">
+        <p class="sm"><b class="or">BNC</b> · <b class="or">Conector F</b> · <b class="or">N-type</b></p>
+      </div>
+    </div>
+  </div>
+  <svg class="a" viewBox="0 0 800 160" style="max-height:13vh;margin-top:1vh"><g class="sv"><rect x="80" y="55" width="640" height="90" rx="10" fill="#d7e6fb"/><rect x="80" y="66" width="640" height="68" fill="url(#hatch)"/><rect x="80" y="80" width="640" height="40" fill="#fff"/></g><line x1="80" y1="100" x2="720" y2="100" stroke="#e65100" stroke-width="9"/>
+    <g fill="#0057d9" stroke="#0b1f44" stroke-width="2"><circle r="10" cy="100"><animateMotion dur="3s" repeatCount="indefinite" path="M80 0 L720 0"/></circle><circle r="10" cy="100"><animateMotion dur="3s" begin="-1s" repeatCount="indefinite" path="M80 0 L720 0"/></circle><circle r="10" cy="100"><animateMotion dur="3s" begin="-2s" repeatCount="indefinite" path="M80 0 L720 0"/></circle></g>
+    <g transform="translate(230 28)"><g class="emi"><use href="#bolt" x="-11" y="-16" width="22" height="32"/></g></g><g transform="translate(400 28)"><g class="emi" style="animation-delay:.8s"><use href="#bolt" x="-11" y="-16" width="22" height="32"/></g></g><g transform="translate(570 28)"><g class="emi" style="animation-delay:1.6s"><use href="#bolt" x="-11" y="-16" width="22" height="32"/></g></g>
+    <text class="tx" x="86" y="30" style="fill:#e65100">EMI bloqueada por la malla ↓</text><text class="tx" x="86" y="152">Señal → conductor central</text></svg>
 </section>
 
-<section class="slide">
-  <h2>Regla 1: omite ceros a la izquierda</h2>
-  <div class="row" id="r1"></div>
-  <p class="out" id="r1o">Los ceros de la derecha o del medio se conservan.</p>
-  <div class="row"><button id="b1">Aplicar regla 1</button></div>
+<!-- 3 · Par trenzado -->
+<section class="sl" data-n="Par trenzado">
+  <div class="k a">4.1 · 2</div>
+  <h2 class="a" style="margin-bottom:1vh">2. Cable de par <b>trenzado</b></h2>
+  <div class="g2" style="grid-template-columns:1.2fr .8fr">
+    <div class="a">
+      <p class="sm">Pares de cobre entrelazados que <b class="or">cancelan la interferencia</b>.</p>
+      <svg viewBox="0 0 540 250" style="max-height:22vh;margin-top:.5vh"><path id="pa" fill="none" stroke="#e65100" stroke-width="8" d="M20 125 C45 60 95 60 120 125 S195 190 220 125 S295 60 320 125 S395 190 420 125 S495 60 520 125"/><path id="pb" fill="none" stroke="#0057d9" stroke-width="8" d="M20 125 C45 190 95 190 120 125 S195 60 220 125 S295 190 320 125 S395 60 420 125 S495 190 520 125"/>
+        <g stroke="#0b1f44" stroke-width="2"><circle r="11" fill="#e65100"><animateMotion dur="3s" repeatCount="indefinite"><mpath href="#pa"/></animateMotion></circle><circle r="11" fill="#0057d9"><animateMotion dur="3s" repeatCount="indefinite"><mpath href="#pb"/></animateMotion></circle></g>
+        <g class="nz" style="--y0:-70px"><use href="#bolt" x="150" y="0" width="24" height="36"/></g><g class="nz" style="--y0:-70px;animation-delay:.9s"><use href="#bolt" x="350" y="0" width="24" height="36"/></g><g class="nz" style="--y0:70px;animation-delay:1.7s"><use href="#bolt" x="250" y="214" width="24" height="36"/></g>
+        <text class="tx" x="20" y="245" style="fill:#e65100">+ señal</text><text class="tx" x="110" y="245" style="fill:#0057d9">− señal</text></svg>
+      <div class="mono bl" style="font-size:1.1rem;letter-spacing:.15em;margin:.8vh 0 6px">TIPOS DE APANTALLAMIENTO</div>
+      <div id="sh" class="row"><button class="op">UTP</button><button class="op">STP / FTP</button></div>
+    </div>
+    <svg class="a utp" id="xs" viewBox="0 0 300 300" style="max-height:36vh;margin:auto"><g class="sv"><circle cx="150" cy="150" r="132" fill="#d7e6fb"/><circle id="shl" cx="150" cy="150" r="108" stroke="#e65100" stroke-width="8" stroke-dasharray="12 6"/>
+      <g stroke-width="2"><circle cx="96" cy="105" r="18" fill="#ff9a1f"/><circle cx="127" cy="105" r="18" fill="#ffe0b2"/><circle cx="173" cy="105" r="18" fill="#2ecc71"/><circle cx="204" cy="105" r="18" fill="#c8f2d8"/><circle cx="96" cy="195" r="18" fill="#2f7bff"/><circle cx="127" cy="195" r="18" fill="#c4d8ff"/><circle cx="173" cy="195" r="18" fill="#9a6a3a"/><circle cx="204" cy="195" r="18" fill="#e3cdb4"/></g></g>
+      <g transform="translate(150 150)"><g class="bz" style="--sx:-190px;--sy:-110px"><use href="#bolt" x="-14" y="-20" width="28" height="40"/></g><g class="bz" style="--sx:190px;--sy:-100px;animation-delay:.4s"><use href="#bolt" x="-14" y="-20" width="28" height="40"/></g><g class="bz" style="--sx:-170px;--sy:120px;animation-delay:.8s"><use href="#bolt" x="-14" y="-20" width="28" height="40"/></g><g class="bz" style="--sx:180px;--sy:130px;animation-delay:1.2s"><use href="#bolt" x="-14" y="-20" width="28" height="40"/></g><g class="bz" style="--sx:0px;--sy:-215px;animation-delay:1.6s"><use href="#bolt" x="-14" y="-20" width="28" height="40"/></g></g></svg>
+  </div>
+  <div class="g2 a" style="margin-top:2vh">
+    <div class="bx" id="bu" data-t="UTP"><p class="sm"><b class="or">UTP:</b> sin blindaje. Económico y el más común en LAN.</p></div>
+    <div class="bx" id="bs" data-t="STP / FTP"><p class="sm"><b class="or">STP / FTP:</b> con pantalla de aluminio. Ideal para entornos industriales.</p></div>
+  </div>
 </section>
 
-<section class="slide">
-  <h2>Regla 2: comprime con ::</h2>
-  <div class="row" id="r2"></div>
-  <p class="out" id="r2o">Hextetos de ceros seguidos se reemplazan por ::</p>
-  <div class="row"><button id="b2">Comprimir</button></div>
+<!-- 4 · Categorías -->
+<section class="sl" data-n="Categorías">
+  <div class="k a">4.1 · 2 · Categorías</div>
+  <h2 class="a">Categorías de cable de par <b>trenzado</b></h2>
+  <div class="a"><table id="ct">
+    <tr><th>Categoría</th><th>Ancho de banda</th><th>Velocidad</th><th>Distancia</th><th>Uso</th></tr>
+    <tr data-k><td>Cat 5e</td><td>100 MHz</td><td>1 Gbps</td><td>100 m</td><td>LAN estándar</td></tr>
+    <tr data-k><td>Cat 6</td><td>250 MHz</td><td>1 Gbps</td><td>100 m</td><td>Empresas</td></tr>
+    <tr data-k><td>Cat 6A</td><td>500 MHz</td><td>10 Gbps</td><td>100 m</td><td>Data centers</td></tr>
+    <tr data-k><td>Cat 8</td><td>2 GHz</td><td>25 / 40 Gbps</td><td>30 m</td><td>Top of Rack</td></tr>
+  </table></div>
+  <div class="bx a" data-t="MÁS RÁPIDO = MÁS GBPS" style="margin-top:3vh">
+    <div class="rec mono or" id="cn" style="font-size:clamp(1.6rem,2.8vw,2.6rem);text-transform:uppercase"></div>
+    <div class="trk" id="ctk"></div>
+  </div>
 </section>
 
-<section class="slide">
-  <h2 class="bad">Restricción crítica: :: una sola vez</h2>
-  <div class="mono bad" style="font-size:1.3rem">2001::1::5</div>
-  <p>Faltan 5 hextetos de ceros. ¿Cómo se reparten?</p>
-  <div class="row" id="amb"></div>
-  <div class="row"><button id="b3">Probar otro reparto</button></div>
-  <p class="good out">Correcto: <span class="mono">2001:0:0:1::5</span> (comprime solo el grupo más largo)</p>
+<!-- 5 · Ponchado -->
+<section class="sl" data-n="Ponchado">
+  <div class="k a">ANSI/TIA-568</div>
+  <h2 class="a" style="margin-bottom:1vh">Estándares de <b>ponchado</b></h2>
+  <div class="g2" style="grid-template-columns:1fr 1.35fr">
+    <div class="a">
+      <div id="std" class="row" style="margin-bottom:8px"><button class="op">T568A</button><button class="op">T568B</button></div>
+      <div class="asm s0" id="asm"><div class="jk">CABLE UTP</div><div id="ws"></div><div class="rj">RJ45</div><div class="pln">PONCHADORA</div></div><div id="stg"></div>
+    </div>
+    <div class="a"><table id="pt"></table></div>
+  </div>
 </section>
 
-<section class="slide">
-  <h2>Pon a prueba tu red</h2>
-  <p>¿Cuál dirección es válida?</p>
-  <div class="q" id="qz"></div>
-  <p class="out" id="qo"></p>
+<!-- 6 · Directo vs cruzado -->
+<section class="sl" data-n="Directo y cruzado">
+  <div class="k a">ANSI/TIA-568 · Patrones de cable</div>
+  <h2 class="a" style="margin-bottom:1vh">Directo vs <b>cruzado</b></h2>
+  <div id="xm" class="a row" style="margin-bottom:6px"><button class="op">PC ↔ Switch · directo</button><button class="op">Switch ↔ Switch · directo</button><button class="op">Switch ↔ Switch · cruzado</button></div>
+  <svg class="a" id="xv" viewBox="0 0 700 290" style="max-height:32vh"></svg>
+  <div class="g2 a" style="margin-top:1.6vh">
+    <div class="bx" id="bd" data-t="CABLE DIRECTO"><p class="sm"><b class="or">T568B en ambos extremos</b><br>Ej.: PC ↔ Switch</p></div>
+    <div class="bx" id="bc" data-t="CABLE CRUZADO"><p class="sm"><b class="or">T568A en un extremo y T568B en el otro</b><br>Ej.: Switch ↔ Switch</p></div>
+  </div>
 </section>
 
-</div>
-<nav>
-  <button class="alt" id="prev" aria-label="Anterior">Atrás</button>
-  <div class="dots" id="dots"></div>
-  <button id="next" aria-label="Siguiente">Siguiente</button>
-</nav>
+<!-- 7 · Fibra óptica + monomodo -->
+<section class="sl" data-n="Fibra óptica">
+  <div class="k a">4.1 · 3</div>
+  <h2 class="a">3. Fibra <b>óptica</b></h2>
+  <p class="a" style="margin-bottom:2.4vh">Transmite <b class="or">luz</b> por un núcleo de vidrio (<b class="or">reflexión total interna</b>).</p>
+  <div class="bx a" data-t="FIBRA MONOMODO">
+    <p>Núcleo: <b class="or">8–10 µm</b> · Un solo modo<br>Larga distancia (decenas a cientos de km)</p><p><b class="or">1310 nm</b> y <b class="or">1550 nm</b></p>
+  </div>
+  <svg class="a" viewBox="0 0 700 150" style="max-height:20vh;margin-top:2vh"><rect class="sv" x="20" y="10" width="660" height="130" fill="#d7e6fb"/><rect x="20" y="64" width="660" height="12" fill="#ffe0b2" stroke="#e65100" stroke-width="3"/><line x1="20" y1="70" x2="680" y2="70" stroke="#e65100" stroke-width="4" class="fl"/><circle r="11" fill="#0057d9" stroke="#0b1f44" stroke-width="2"><animateMotion dur="2s" repeatCount="indefinite" path="M20 70 L680 70"/></circle><circle r="11" fill="#0057d9" stroke="#0b1f44" stroke-width="2"><animateMotion dur="2s" begin="-1s" repeatCount="indefinite" path="M20 70 L680 70"/></circle><text class="tx" x="28" y="34">Revestimiento (cladding)</text><text class="tx" x="28" y="128" style="fill:#e65100">Núcleo (core)</text><text class="tx" x="672" y="128" text-anchor="end">Llegan juntos</text></svg>
+</section>
+
+<!-- 8 · Multimodo -->
+<section class="sl" data-n="Multimodo">
+  <div class="k a">4.1 · 3 · Fibra</div>
+  <h2 class="a">Fibra <b>multimodo</b></h2>
+  <div class="bx a" data-t="FIBRA MULTIMODO">
+    <p>Núcleo: <b class="or">50 o 62.5 µm</b> · Varios modos<br>Corta distancia (hasta <b class="or">300–550 m</b> a 10 Gbps)</p><p><b class="or">850 nm</b> y <b class="or">1300 nm</b></p>
+  </div>
+  <svg class="a" viewBox="0 0 700 220" style="max-height:30vh;margin-top:2.4vh"><rect class="sv" x="20" y="10" width="660" height="200" fill="#d7e6fb"/><rect x="20" y="50" width="660" height="120" fill="#ffe0b2" stroke="#e65100" stroke-width="3"/>
+    <path d="M20 110 L680 110" stroke="#0057d9" stroke-width="3" class="fl" fill="none"/><path d="M20 110 L75 70 L130 150 L185 70 L240 150 L295 70 L350 150 L405 70 L460 150 L515 70 L570 150 L625 70 L680 150" stroke="#00875a" stroke-width="3" fill="none" class="fl"/><path d="M20 110 L50 64 L80 156 L110 64 L140 156 L170 64 L200 156 L230 64 L260 156 L290 64 L320 156 L350 64 L380 156 L410 64 L440 156 L470 64 L500 156 L530 64 L560 156 L590 64 L620 156 L650 64 L680 156" stroke="#d32f2f" stroke-width="3" fill="none" class="fl"/>
+    <circle r="10" fill="#0057d9" stroke="#0b1f44" stroke-width="2"><animateMotion dur="2s" repeatCount="indefinite" path="M20 110 L680 110"/></circle>
+    <circle r="10" fill="#00875a" stroke="#0b1f44" stroke-width="2"><animateMotion dur="3s" repeatCount="indefinite" path="M20 110 L75 70 L130 150 L185 70 L240 150 L295 70 L350 150 L405 70 L460 150 L515 70 L570 150 L625 70 L680 150"/></circle>
+    <circle r="10" fill="#d32f2f" stroke="#0b1f44" stroke-width="2"><animateMotion dur="5s" repeatCount="indefinite" path="M20 110 L50 64 L80 156 L110 64 L140 156 L170 64 L200 156 L230 64 L260 156 L290 64 L320 156 L350 64 L380 156 L410 64 L440 156 L470 64 L500 156 L530 64 L560 156 L590 64 L620 156 L650 64 L680 156"/></circle>
+    <text class="tx" x="28" y="34">Revestimiento (cladding)</text><text class="tx" x="28" y="196" style="fill:#e65100">Núcleo (core)</text><text class="tx" x="672" y="34" text-anchor="end">Dispersión modal</text></svg>
+</section>
+
+<!-- 9 · Conectores -->
+<section class="sl" data-n="Conectores">
+  <div class="k a">4.1 · 3 · Fibra</div>
+  <h2 class="a">Conectores <b>típicos</b></h2>
+  <div class="g3">
+    <div class="bx a" data-t="LC"><svg viewBox="0 0 280 140"><g class="sv"><rect x="160" y="34" width="100" height="72" fill="#d7e6fb"/><rect x="182" y="52" width="56" height="36" fill="#0b1f44"/></g><g class="ps"><g class="sv" stroke-width="3.5"><rect x="70" y="52" width="72" height="36" fill="#fff"/><path d="M84 52l10-14h30l8 14" fill="#e65100"/><rect x="142" y="64" width="22" height="12" fill="#ffe0b2"/></g><path d="M0 70H70" stroke="#e65100" stroke-width="5"/></g><text class="clk tx" x="135" y="24" style="fill:#e65100;font-size:20px">¡clic!</text></svg>
+      <p class="sm"><b class="or">LC:</b> pequeño. El más usado en switches y SFP.</p></div>
+    <div class="bx a" data-t="SC"><svg viewBox="0 0 280 140"><g class="sv"><rect x="160" y="22" width="100" height="96" fill="#d7e6fb"/><rect x="182" y="46" width="56" height="48" fill="#0b1f44"/></g><g class="ps"><g class="sv" stroke-width="3.5"><rect x="62" y="40" width="82" height="60" fill="#fff"/><rect x="144" y="62" width="22" height="16" fill="#ffe0b2"/></g><path d="M0 70H62" stroke="#e65100" stroke-width="5"/></g><text class="clk tx" x="135" y="16" style="fill:#e65100;font-size:20px">¡clic!</text></svg>
+      <p class="sm"><b class="or">SC:</b> cuadrado, push-pull. Redes PON/FTTH.</p></div>
+    <div class="bx a" data-t="ST"><svg viewBox="0 0 280 140"><g class="sv"><rect x="160" y="22" width="100" height="96" fill="#d7e6fb"/><circle cx="210" cy="70" r="30" fill="#0b1f44"/></g><g class="ps"><g class="sv" stroke-width="3.5"><circle cx="106" cy="70" r="36" fill="#fff"/><circle cx="106" cy="70" r="14" fill="#ffe0b2"/><rect x="140" y="62" width="26" height="16" fill="#ffe0b2"/></g><g class="rt"><rect x="92" y="28" width="28" height="12" fill="#e65100" stroke="#0b1f44" stroke-width="2.5"/><rect x="92" y="100" width="28" height="12" fill="#e65100" stroke="#0b1f44" stroke-width="2.5"/></g><path d="M0 70H70" stroke="#e65100" stroke-width="5"/></g><text class="clk tx" x="135" y="16" style="fill:#e65100;font-size:20px">¡giro!</text></svg>
+      <p class="sm"><b class="or">ST:</b> cilíndrico, de bayoneta (giro).</p></div>
+  </div>
+</section>
+
+<!-- 10 · Empalmes -->
+<section class="sl" data-n="Empalmes">
+  <div class="k a">4.1 · 3 · Fibra</div>
+  <h2 class="a">Empalmes de <b>fibra óptica</b></h2>
+  <div class="g2">
+    <div class="bx a" data-t="EMPALME POR FUSIÓN"><svg viewBox="0 0 400 130"><g class="fa"><rect x="0" y="52" width="200" height="26" fill="#d7e6fb" stroke="#0b1f44" stroke-width="3"/><rect x="0" y="62" width="200" height="6" fill="#e65100"/></g><g class="fb"><rect x="200" y="52" width="200" height="26" fill="#d7e6fb" stroke="#0b1f44" stroke-width="3"/><rect x="200" y="62" width="200" height="6" fill="#e65100"/></g><circle class="sk" cx="200" cy="65" r="46" fill="url(#arc)"/><rect class="gl" x="150" y="58" width="100" height="14" fill="#ffd54a" opacity=".6"/></svg>
+      <p class="sm"><b class="or">Arco eléctrico</b> de alta precisión. La menor pérdida.</p>
+      <div class="ls"><span class="mono gr">Pérdida de inserción &lt; 0.02 dB</span><div class="bar"><i style="--w:3%"></i></div></div></div>
+    <div class="bx a" data-t="EMPALME MECÁNICO"><svg viewBox="0 0 400 130"><g class="fa"><rect x="0" y="52" width="190" height="26" fill="#d7e6fb" stroke="#0b1f44" stroke-width="3"/><rect x="0" y="62" width="190" height="6" fill="#e65100"/></g><g class="fb"><rect x="210" y="52" width="190" height="26" fill="#d7e6fb" stroke="#0b1f44" stroke-width="3"/><rect x="210" y="62" width="190" height="6" fill="#e65100"/></g>
+      <rect x="140" y="38" width="120" height="54" rx="8" fill="rgba(0,87,217,.25)" stroke="#0b1f44" stroke-width="4"/><g fill="#0057d9"><circle cx="160" cy="48" r="3"/><circle cx="185" cy="82" r="3"/><circle cx="215" cy="48" r="3"/><circle cx="240" cy="82" r="3"/></g><g class="pr"><path d="M180 12h40l-20 18z" fill="#0b1f44"/></g><text class="tx" x="200" y="116" text-anchor="middle">gel de adaptación</text></svg>
+      <p class="sm"><b class="or">Gel de adaptación</b> en un manguito. Solución temporal.</p>
+      <div class="ls m"><span class="mono rd">Pérdida ~0.2 – 0.5 dB</span><div class="bar"><i style="--w:70%"></i></div></div></div>
+  </div>
+</section>
+
+<!-- 11 · Microondas -->
+<section class="sl" data-n="Microondas">
+  <div class="k a">4.1 · 4</div>
+  <h2 class="a" style="margin-bottom:1vh">4. Enlaces de microondas <b>terrestres</b></h2>
+  <p class="a" style="margin-bottom:1.4vh">Enlaces punto a punto de <b class="or">3 a 30 GHz</b>. Necesitan <b class="or">línea de vista</b> y la <b class="or">zona de Fresnel</b> libre.</p>
+  <div id="mw" class="a row" style="margin-bottom:8px"><button class="op">Zona de Fresnel libre</button><button class="op">Obstrucción en la 1.ª zona</button></div>
+  <div id="mx" class="g2 a" style="grid-template-columns:1.5fr 1fr;align-items:center">
+    <svg id="mv" viewBox="0 0 700 300" style="max-height:34vh"><ellipse cx="350" cy="100" rx="270" ry="62" fill="rgba(0,87,217,.1)" stroke="#0057d9" stroke-width="3" stroke-dasharray="10 7"><animate attributeName="ry" values="62;68;62" dur="3s" repeatCount="indefinite"/></ellipse>
+      <line x1="0" y1="270" x2="700" y2="270" stroke="#0b1f44" stroke-width="4"/><g class="sv"><path d="M70 270V70M630 270V70M48 100h44M608 100h44"/></g>
+      <polygon class="hill" points="200,270 350,128 500,270" fill="#8d6e63" stroke="#0b1f44" stroke-width="4"/>
+      <line x1="70" y1="100" x2="630" y2="100" stroke="#0b1f44" stroke-width="2" stroke-dasharray="3 6"/>
+      <g class="wv"><circle cx="76" cy="100" r="6"><animate attributeName="r" values="6;90" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="2s" repeatCount="indefinite"/></circle><circle cx="76" cy="100" r="6"><animate attributeName="r" values="6;90" dur="2s" begin="-1s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="2s" begin="-1s" repeatCount="indefinite"/></circle></g>
+      <g class="gOK" fill="#e65100" stroke="#0b1f44" stroke-width="2"><circle r="9" cy="100"><animateMotion dur="2.2s" repeatCount="indefinite" path="M70 0 L630 0"/></circle><circle r="9" cy="100"><animateMotion dur="2.2s" begin="-.7s" repeatCount="indefinite" path="M70 0 L630 0"/></circle><circle r="9" cy="100"><animateMotion dur="2.2s" begin="-1.4s" repeatCount="indefinite" path="M70 0 L630 0"/></circle></g>
+      <g class="gOB" fill="#e65100" stroke="#0b1f44" stroke-width="2"><circle r="9" cy="100"><animateMotion dur="1.4s" repeatCount="indefinite" path="M70 0 L340 0"/><animate attributeName="opacity" values="1;1;0" keyTimes="0;.7;1" dur="1.4s" repeatCount="indefinite"/></circle><circle r="9" cy="100"><animateMotion dur="1.4s" begin="-.7s" repeatCount="indefinite" path="M70 0 L340 0"/><animate attributeName="opacity" values="1;1;0" keyTimes="0;.7;1" dur="1.4s" begin="-.7s" repeatCount="indefinite"/></circle></g>
+      <text class="tx" x="246" y="34">1.ª zona de Fresnel</text><text class="tx" x="48" y="292">Tx</text><text class="tx" x="620" y="292">Rx</text></svg>
+    <div><div class="mono bl" style="font-size:1.1rem;letter-spacing:.15em">NIVEL DE SEÑAL EN Rx</div><div class="mt"><i></i></div><p id="mwt" class="sm" style="min-height:3.6em"></p></div>
+  </div>
+</section>
 
 <script>
-const S=[...document.querySelectorAll('.slide')],D=document.getElementById('dots');
-let cur=0;S.forEach(()=>D.appendChild(document.createElement('i')));
-function go(n){cur=Math.max(0,Math.min(S.length-1,n));S.forEach((s,i)=>s.classList.toggle('on',i===cur));[...D.children].forEach((d,i)=>d.classList.toggle('on',i===cur));
-bar.style.transform='scaleX('+(cur+1)/S.length+')';
-prev.style.visibility=cur?'visible':'hidden';next.style.visibility=cur<S.length-1?'visible':'hidden'}
-prev.onclick=()=>go(cur-1);next.onclick=()=>go(cur+1);
-addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
-const H=['2001','0db8','0000','0000','0000','0000','0000','0001'];
-const mk=(h)=>{const b=document.createElement('span');b.className='box mono';b.innerHTML=h;return b};
-const sepEl=()=>{const s=document.createElement('span');s.className='sep mono';s.textContent=':';return s};
-// slide 2
-const hx=document.getElementById('hx');
-H.forEach((h,i)=>{const b=mk(h);b.style.cursor='pointer';b.onclick=()=>{[...hx.children].forEach(c=>c.classList.remove('hl'));b.classList.add('hl');hxo.textContent='Hexteto '+(i+1)+': 4 hex = 16 bits. Acumulado: '+(i+1)*16+' bits.'};hx.appendChild(b);if(i<7)hx.appendChild(sepEl())});
-// slide 3
-const r1=document.getElementById('r1');
-H.forEach((h,i)=>{const t=h==='0000'?'000':h.match(/^0*/)[0];const rest=h.slice(t.length);const z=document.createElement('span');z.className='z';z.textContent=t;const b=mk('');b.appendChild(z);b.append(rest);r1.appendChild(b);if(i<7)r1.appendChild(sepEl())});
-let on1=false;b1.onclick=()=>{on1=!on1;[...r1.querySelectorAll('.z')].forEach(z=>{z.style.maxWidth=on1?'0':'';z.style.opacity=on1?0:1});b1.textContent=on1?'Deshacer':'Aplicar regla 1';r1o.textContent=on1?'Resultado: 2001:db8:0:0:0:0:0:1':'Los ceros de la derecha o del medio se conservan.'};
-// slide 4
-const R=['2001','db8','0','0','0','0','0','1'],r2=document.getElementById('r2'),zs=[];
-R.forEach((h,i)=>{const b=mk(h);r2.appendChild(b);if(h==='0')zs.push(b);if(i<7){const s=sepEl();r2.appendChild(s);if(h==='0'&&i<6)zs.push(s)}});
-const dc=mk('::');dc.classList.add('dc','gone');r2.insertBefore(dc,r2.children[4]);
-let on2=false;b2.onclick=()=>{on2=!on2;zs.forEach(z=>z.classList.toggle('gone',on2));dc.classList.toggle('gone',!on2);b2.textContent=on2?'Descomprimir':'Comprimir';r2o.textContent=on2?'Resultado final: 2001:db8::1':'Hextetos de ceros seguidos se reemplazan por ::'};
-// slide 5
-const amb=document.getElementById('amb');let n=1;
-function drawAmb(){amb.innerHTML='';const parts=['2001',...Array(n).fill('0'),'1',...Array(5-n).fill('0'),'5'];parts.forEach((p,i)=>{const b=mk(p);if(p==='0')b.classList.add('dc');b.style.setProperty('--j',i);amb.appendChild(b)});}
-drawAmb();b3.onclick=()=>{n=n%4+1;drawAmb()};
-// slide 6
-const opts=[['2001::db8::1',0],['2001:db8::1',1],['2001:db8:::1',0]],qz=document.getElementById('qz');
-opts.forEach(([t,ok])=>{const b=document.createElement('button');b.className='alt mono';b.textContent=t;b.onclick=()=>{qo.className='out '+(ok?'good':'bad err');qo.style.animation='none';void qo.offsetWidth;qo.style.animation='';qo.textContent=ok?'Correcto: usa :: una sola vez.':'No: tiene :: repetido o mal escrito.'};qz.appendChild(b)});
-S.forEach(sl=>{[...sl.children].forEach((c,i)=>{c.style.setProperty('--i',i);[...c.children].forEach((k,j)=>k.style.setProperty('--j',j))})});
-go(0);
+const S=[...document.querySelectorAll('.sl')];let i=-1,auto=true,stt=null;const G={};
+const ID={intro:0,coax:1,par:2,cat:3,pon:4,dir:5,mw:10};
+function grp(si,sel,fn,n,au,hov){const ops=[...document.querySelectorAll(sel)];let cur=0;
+ function s(k){cur=(k+n)%n;ops.forEach((o,j)=>o.classList.toggle('on',j==cur));fn(cur)}
+ ops.forEach((o,j)=>{o.onclick=()=>{auto=false;s(j)};if(hov)o.onmouseenter=()=>{auto=false;s(j)}});
+ if(si!==null)G[si]={s,get c(){return cur},au};s(0)}
+const trk=(id,d,n)=>document.getElementById(id).innerHTML=Array.from({length:n||5},(_,k)=>`<i style="--n:${k};--d:${d}s"></i>`).join('');
+// 2 coaxial: resalta capas
+grp(ID.coax,'#ly .op',k=>['L0','L1','L2','L3'].forEach((id,j)=>document.getElementById(id).classList.toggle('hot',j==k)),4,true,true);
+// 3 par trenzado: UTP / STP
+grp(ID.par,'#sh .op',k=>{document.getElementById('xs').setAttribute('class','a '+(k?'stp':'utp'));document.getElementById('bu').classList.toggle('hl',!k);document.getElementById('bs').classList.toggle('hl',!!k)},2,true);
+// 4 categorías: paquetes más rápidos
+const CT=[['Cat 5e · 1 Gbps',3],['Cat 6 · 1 Gbps',3],['Cat 6A · 10 Gbps',.7],['Cat 8 · 25 / 40 Gbps',.35]];
+grp(ID.cat,'#ct tr[data-k]',k=>{document.getElementById('cn').textContent=CT[k][0];trk('ctk',CT[k][1])},4,true,true);
+// 5 ponchado
+const CO={g:'#2ecc71',o:'#ff9a1f',b:'#2f7bff',m:'#9a6a3a'},NM={g:'Verde',o:'Naranja',b:'Azul',m:'Marrón'};
+const st=w=>w[1]?`repeating-linear-gradient(45deg,#fff 0 8px,${CO[w[0]]} 8px 16px)`:CO[w[0]];
+const nm=w=>(w[1]?'Blanco / ':'')+NM[w[0]];
+const WA=[['g',1],['g',0],['o',1],['b',0],['b',1],['o',0],['m',1],['m',0]],WB=[['o',1],['o',0],['g',1],['b',0],['b',1],['g',0],['m',1],['m',0]];
+const FN=['TX+','TX−','RX+','Gigabit','Gigabit','RX−','Gigabit','Gigabit'];
+document.getElementById('pt').innerHTML='<tr><th>Pin</th><th>T568A</th><th>T568B</th><th>Función</th></tr>'+WA.map((a,j)=>`<tr data-p="${j}"><td>${j+1}</td><td><span class="sw" style="background:${st(a)}"></span>${nm(a)}</td><td><span class="sw" style="background:${st(WB[j])}"></span>${nm(WB[j])}</td><td>${FN[j]}</td></tr>`).join('');
+function hlp(p,on){document.querySelectorAll(`[data-p="${p}"]`).forEach(e=>e.classList.toggle('hl',on))}
+function stage(n,name){const a=document.getElementById('asm');a.className='asm s'+n;document.getElementById('stg').textContent=['1 · Separar los 8 hilos','2 · Ordenar según '+name,'3 · Insertar en el RJ45','4 · Crimpar'][n]}
+function runAsm(name){clearTimeout(stt);let k=0;stage(0,name);const seq=[2000,2400,2400,2800];(function nx(){stt=setTimeout(()=>{k=(k+1)%4;stage(k,name);nx()},seq[k])})()}
+grp(ID.pon,'#std .op',k=>{const W=k?WB:WA,name=k?'T568B':'T568A';
+ document.getElementById('ws').innerHTML=W.map((w,j)=>`<div class="wi" data-p="${j}" style="--i:${j};--o:${(j%2?1:-1)*(10+j*5)}px;--rt:${(j%3-1)*13}deg;background:${st(w)}"></div>`).join('');
+ document.querySelectorAll('#ws .wi,#pt tr[data-p]').forEach(e=>{e.onmouseenter=()=>hlp(e.dataset.p,true);e.onmouseleave=()=>hlp(e.dataset.p,false)});runAsm(name)},2,true);
+// 6 directo / cruzado
+const PY=[60,115,170,225],PN=[1,2,3,6],PCr=['TX+','TX−','RX+','RX−'],SWr=['RX+','RX−','TX+','TX−'];
+const XS=[{a:'PC',b:'Switch',ra:PCr,rb:SWr,m:[0,1,2,3],d:0},{a:'Switch',b:'Switch',ra:SWr,rb:SWr,m:[0,1,2,3],d:-1},{a:'Switch',b:'Switch',ra:SWr,rb:SWr,m:[2,3,0,1],d:1}];
+grp(ID.dir,'#xm .op',k=>{const x=XS[k];let h=`<g class="sv"><rect x="10" y="20" width="150" height="250" rx="12" fill="#d7e6fb"/><rect x="540" y="20" width="150" height="250" rx="12" fill="#d7e6fb"/></g><text class="tx" x="85" y="48" text-anchor="middle" style="font-size:18px">${x.a}</text><text class="tx" x="615" y="48" text-anchor="middle" style="font-size:18px">${x.b}</text>`;let allok=true;
+ PY.forEach((y,p)=>{const q=x.m[p],y2=PY[q],tA=x.ra[p][0]=='T',tB=x.rb[q][0]=='T',ok=tA!=tB;if(!ok)allok=false;
+  h+=`<text class="tx" x="150" y="${y+5}" text-anchor="end" style="fill:${tA?'#e65100':'#0057d9'}">${PN[p]} ${x.ra[p]}</text><text class="tx" x="550" y="${y2+5}" style="fill:${tB?'#e65100':'#0057d9'}">${PN[q]} ${x.rb[q]}</text>`;
+  h+=`<line x1="168" y1="${y}" x2="532" y2="${y2}" stroke="${ok?'#00875a':'#d32f2f'}" stroke-width="5" ${ok?'':'stroke-dasharray="10 8"'}/>`;
+  if(ok){const path=tA?`M168 ${y} L532 ${y2}`:`M532 ${y2} L168 ${y}`;h+=`<circle r="9" fill="#e65100" stroke="#0b1f44" stroke-width="2"><animateMotion dur="2s" begin="${-p*.5}s" repeatCount="indefinite" path="${path}"/></circle>`}
+  else h+=`<text x="350" y="${(y+y2)/2+10}" text-anchor="middle" style="font:900 30px sans-serif;fill:#d32f2f">✕</text>`});
+ h+=`<text class="tx" x="350" y="285" text-anchor="middle" style="font-size:18px;fill:${allok?'#00875a':'#d32f2f'}">${allok?'✔ Cada TX llega a un RX':'✘ TX contra TX · sin comunicación'}</text>`;
+ document.getElementById('xv').innerHTML=h;
+ document.getElementById('bd').classList.toggle('hl',x.d<=0);document.getElementById('bc').classList.toggle('hl',x.d==1)},3,true);
+// 11 microondas
+const MW=['Señal fuerte: zona despejada.','<b>Pérdida de señal:</b> el obstáculo invade la zona de Fresnel.'];
+grp(ID.mw,'#mw .op',k=>{document.getElementById('mx').classList.toggle('ob',!!k);document.getElementById('mwt').innerHTML=MW[k]},2,true);
+// navegación
+const rl=document.getElementById('rl');S.forEach((s,k)=>{const t=document.createElement('i');t.textContent=String(k+1).padStart(2,'0');t.title=s.dataset.n;t.onclick=()=>go(k);rl.appendChild(t)});
+S.forEach(s=>s.querySelectorAll('.a').forEach((e,k)=>e.style.animationDelay=(.4+k*.12)+'s'));
+function go(n){n=Math.max(0,Math.min(S.length-1,n));if(n==i)return;const f=i<0;i=n;
+ if(!f){const c=document.getElementById('scan');c.classList.remove('run');void c.offsetWidth;c.classList.add('run')}
+ S.forEach((s,k)=>s.classList.toggle('on',k==i));[...rl.children].forEach((t,k)=>t.classList.toggle('on',k==i));
+ document.getElementById('nm').textContent=String(i+1).padStart(2,'0')+'/'+String(S.length).padStart(2,'0');auto=true;if(i!=ID.pon)clearTimeout(stt);if(G[i])G[i].s(0);if(i==ID.pon)G[i].s(0)}
+setInterval(()=>{if(auto&&G[i]&&G[i].au&&i!=ID.pon)G[i].s(G[i].c+1)},3800);
+document.getElementById('nx').onclick=()=>go(i+1);document.getElementById('pv').onclick=()=>go(i-1);
+document.querySelectorAll('button').forEach(b=>b.addEventListener('mousedown',e=>e.preventDefault()));
+function fs(){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+addEventListener('keydown',e=>{const k=e.key;
+ if((k=='ArrowDown'||k=='ArrowUp')&&G[i]){e.preventDefault();auto=false;G[i].s(G[i].c+(k=='ArrowDown'?1:-1));return}
+ if(['ArrowRight','PageDown',' ','Enter','n'].includes(k)){e.preventDefault();go(i+1)}
+ else if(['ArrowLeft','PageUp','Backspace','p'].includes(k)){e.preventDefault();go(i-1)}
+ else if(k=='Home')go(0);else if(k=='End')go(S.length-1);
+ else if(k=='f'||k=='F')fs();
+ else if(k>='1'&&k<='9')go(+k-1);else if(k=='0')go(9)},true);
+let tx=0;document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);document.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)go(i+(d<0?1:-1))});
+window.focus();go(0);
 </script>
 </body>
 </html>
